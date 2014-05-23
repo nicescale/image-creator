@@ -43,6 +43,7 @@ install -D -m 0644 $SOURCE_DIR/assets/firstpaas.ddl ${mco_plugin_dir}/mcollectiv
 
 install -D -m 0755 $SOURCE_DIR/assets/first-boot.sh ${bin_dir}/first-boot.sh
 install -D -m 0644 $SOURCE_DIR/assets/nicescale.conf ${ns_conf_path}
+install -D -m 0644 $SOURCE_DIR/assets/facter_plugin.rb ${ruby_prefix}/lib/ruby/gems/1.9.1/gems/facter-2.0.1/lib/facter/facter_plugin.rb
 touch $ns_first_boot_marker
 cat <<-EOS > /etc/rc.local
 #!/bin/sh -e

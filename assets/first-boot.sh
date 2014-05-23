@@ -43,7 +43,7 @@ function config_mcollective {
   lib_dir=${mco_plugin_dir}
   [ -d $conf_dir ] || mkdir -p $conf_dir
   
-  cat <<-EOS >{$conf_dir}/server.cfg
+  cat <<-EOS >${conf_dir}/server.cfg
 main_collective = ${mq_vhost}
 collectives = ${mq_vhost}
 libdir = ${lib_dir}
