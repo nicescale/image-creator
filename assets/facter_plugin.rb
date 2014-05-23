@@ -39,7 +39,7 @@ end
 
 # The service IDs of this node
 def set_service_ids
-  manifest_file = FP::Config.service_list_conf_path
+  manifest_file = FP::Config.instance.service_list_conf_path
   return unless File.exists?(manifest_file) 
   vars = JSON.parse(File.read(manifest_file))
   service_ids = vars['modules'].keys.join(',')
@@ -49,7 +49,7 @@ end
 # Set the tags of this instance
 # NB. Must be run after set_service_ids
 def set_tags
-  global_vars_file = FP::Config.global_vars_conf_path
+  global_vars_file = FP::Config.instance.global_vars_conf_path
   return unless File.exists?(global_vars_file)
   vars = JSON.parse(File.read(global_vars_file))
   service_ids = Facter[:service_ids].value.split(',')
