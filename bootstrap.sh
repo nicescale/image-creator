@@ -1,5 +1,6 @@
 #!/bin/bash
 SOURCE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+. ${SOURCE_DIR}/assets/nicescale.conf
 
 cd /tmp
 if `which apt-get >/dev/null` && test -x `which apt-get`; then
@@ -12,36 +13,39 @@ fi
 wget http://cache.ruby-lang.org/pub/ruby/1.9/ruby-1.9.3-p547.tar.gz
 tar xf ruby-1.9.3-p547.tar.gz
 cd ruby-1.9.3-p547
-./configure --prefix=/opt/nicescale/support/ruby-1.9.3-p547 --disable-install-doc --disable-install-capi --disable-install-doc
+./configure --prefix=${ruby_prefix} --disable-install-doc --disable-install-capi --disable-install-doc
 make -j8 > /tmp/build.log 2>&1
 make install
 
-/opt/nicescale/support/ruby-1.9.3-p547/bin/gem install --no-ri --no-rdoc facter hiera stomp
+${ruby_prefix}/bin/gem install --no-ri --no-rdoc facter hiera stomp parseconfig
 
 cd /tmp
 git clone https://github.com/mountkin/marionette-collective.git
 cd marionette-collective
 git checkout v2.5.1-patched
-/opt/nicescale/support/ruby-1.9.3-p547/bin/ruby install.rb --no-rdoc --plugindir=/opt/nicescale/support/libexec --configdir=/opt/nicescale/support/etc/mcollective --bindir=/opt/nicescale/support/bin --sbindir=/opt/nicescale/support/sbin
+mco_conf_path=`dirname ${mco_client_conf_path}`
+${ruby_prefix}/bin/ruby install.rb --no-rdoc --plugindir=${mco_plugin_dir} --configdir=${mco_conf_path} --bindir=${bin_dir} --sbindir=${sbin_dir}
 
 cd /tmp
 
 git clone https://github.com/puppetlabs/puppet.git
 cd puppet
 git checkout 3.6.0 -b v3.6.0
-/opt/nicescale/support/ruby-1.9.3-p547/bin/ruby install.rb --no-rdoc --configdir=/opt/nicescale/support/etc/puppet --bindir=/opt/nicescale/support/bin
+${ruby_prefix}/bin/ruby install.rb --no-rdoc --configdir=${puppet_conf_dir} --bindir=${bin_dir}
 
-for f in `ls /opt/nicescale/support/ruby-1.9.3-p547/bin`; do
-  ln -s /opt/nicescale/support/ruby-1.9.3-p547/bin/$f /opt/nicescale/support/bin/$f
+for f in `ls ${ruby_prefix}/bin`; do
+  ln -s ${ruby_prefix}/bin/$f ${bin_dir}/$f
 done
 
 # First boot script
-cp $SOURCE_DIR/assets/firstpaas.* /opt/nicescale/support/libexec/mcollective/agent/
-cp $SOURCE_DIR/assets/first-boot.sh /opt/nicescale/support/bin/
-chmod +x /opt/nicescale/support/bin/first-boot.sh
-touch /opt/nicescale/first-boot
+install -D -m 0644 $SOURCE_DIR/assets/firstpaas.rb ${mco_plugin_dir}/mcollective/agent/firstpaas.rb
+install -D -m 0644 $SOURCE_DIR/assets/firstpaas.ddl ${mco_plugin_dir}/mcollective/agent/firstpaas.ddl
+
+install -D -m 0755 $SOURCE_DIR/assets/first-boot.sh ${bin_dir}/first-boot.sh
+install -D -m 0644 $SOURCE_DIR/assets/nicescale.conf ${ns_conf_path}
+touch $ns_first_boot_marker
 cat <<-EOS > /etc/rc.local
 #!/bin/sh -e
-/opt/nicescale/support/bin/first-boot.sh
+${bin_dir}/first-boot.sh
 exit 0
 EOS

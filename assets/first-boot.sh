@@ -1,8 +1,10 @@
 #!/bin/bash
 
 # This script should and must be run only once after the instance is created.
-gateway="http://54.245.95.3"
-marker='/opt/nicescale/first-boot'
+. /opt/nicescale/support/etc/nicescale.conf
+
+
+init_conf_dir=$(dirname ${init_conf_path})
 
 function get_mac {
   /sbin/ifconfig|grep HWaddr|awk '{print $NF}'|sort|tr -d '\n'|tr '[:upper:]' '[:lower:]'
@@ -36,9 +38,9 @@ function sign {
 }
 
 function config_mcollective {
-  . /opt/nicescale/support/env/credentials.conf
-  conf_dir='/opt/nicescale/support/etc/mcollective'
-  lib_dir='/opt/nicescale/support/libexec'
+  . ${init_conf_path}
+  conf_dir=$(dirname ${mco_server_conf_path})
+  lib_dir=${mco_plugin_dir}
   [ -d $conf_dir ] || mkdir -p $conf_dir
   
   cat <<-EOS >{$conf_dir}/server.cfg
@@ -98,29 +100,28 @@ function cleanup {
     echo "testing"
     return 0
   fi
-
-  sed -i "/\/opt\/nicescale\/support/bin/first-boot.sh/d" /etc/rc.local
-  [ -f $marker ] && rm -f $marker
+  echo -e "#!/bin/sh\nexit 0\n">/etc/rc.local
+  [ -f $ns_first_boot_marker ] && rm -f $ns_first_boot_marker
   rm -f $0
 }
 
 function load_credentials {
-  [ -d /opt/nicescale/support/env ] || mkdir -p /opt/nicescale/support/env
+  [ -d $init_conf_dir ] || mkdir -p $init_conf_dir
   for i in `seq 1 120`; do
-    local url="$gateway/internal/instance-credentials/`get_instance_id`/`sign`.text"
-    local http_status=`curl -s -o /opt/nicescale/support/env/credentials.conf -w '%{http_code}' -H"Host: api.firstpaas.com" $url`
+    local url="$ns_gateway/internal/instance-credentials/`get_instance_id`/`sign`.text"
+    local http_status=`curl -s -o ${init_conf_path} -w '%{http_code}' -H"Host: api.firstpaas.com" $url`
     [ $http_status = 200 ] && break
     sleep 1
   done
 }
 
 function mock_credentials {
-  [ -d /opt/nicescale/support/env ] || mkdir -p /opt/nicescale/support/env
-  cat <<- EOS > /opt/nicescale/support/env/credentials.conf
+  [ -d $init_conf_dir ] || mkdir -p $init_conf_dir
+  cat <<- EOS > $init_conf_path
 project_id=mcollective
 uuid=deadbeef
 instance_id=`get_instance_id`
-gateway=$gateway
+gateway=$ns_gateway
 key=testaaaa
 mq_vhost=test
 mq_host=mq.lajipk.com
@@ -128,7 +129,7 @@ mq_port=61613
 EOS
 }
 
-if [ ! -e $marker ]; then
+if [ ! -e $ns_first_boot_marker ]; then
   cleanup
   exit 0
 fi
