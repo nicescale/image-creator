@@ -66,6 +66,10 @@ module FP
         @instance_service_ids ||= JSON.parse(File.read(Config.instance.service_list_conf_path))['modules'].keys
       end
 
+      def has_service?(service_id)
+        services_on_this_instance.include?(service_id)
+      end
+
       private
       def get_namespace_var(vars, key, namespace = nil)
         if namespace and vars[namespace]

@@ -50,6 +50,7 @@ libdir = ${lib_dir}
 logfile = /var/log/mcollective.log
 loglevel = info
 daemonize = 1
+identity = ${uuid}
 
 # Plugins
 securityprovider = psk
@@ -78,6 +79,7 @@ loglevel = info
 # Plugins
 securityprovider = psk
 plugin.psk = unset
+identity = ${uuid}
 
 connector = rabbitmq
 plugin.rabbitmq.vhost = /${mq_vhost}

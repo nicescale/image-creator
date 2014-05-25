@@ -1,4 +1,6 @@
 require 'json'
+require 'fp/config'
+require 'fp/vars'
 
 module MCollective
   module Agent
@@ -6,7 +8,6 @@ module MCollective
       action "ping" do
         reply[:msg] = 'pong'
         reply[:instance_id] = Facts['instance_id']
-        reply[:fp_uuid] = Facts['fp_uuid']
       end
       
       # Run each checklist and return their results.
@@ -22,17 +23,15 @@ module MCollective
 
         reply[:result] = result
         reply[:instance_id] = Facts['instance_id']
-        reply[:fp_uuid] = Facts['fp_uuid']
       end
 
       action "puppet_apply" do
         if request[:force_reload_facts]
-          run('/etc/.fp/dynamic_facter.rb')
+          run(FP::Config.instance.dynamic_facter_install_path)
         end
         
         reply[:instance_id] = Facts['instance_id']
-        reply[:fp_uuid] = Facts['fp_uuid']
-        reply[:status] = run('/var/opt/cfagent apply', :stdout => :stdout, :stderr => :stderr, :timeout => 600)
+        reply[:status] = run("#{FP::Config.instance.cf_agent} apply", :stdout => :stdout, :stderr => :stderr, :timeout => 600)
       end
 
       # Retrieve a single fact from the node
@@ -40,7 +39,6 @@ module MCollective
         reply[:fact] = request[:fact]
         reply[:value] = Facts[request[:fact]]
         reply[:instance_id] = Facts['instance_id']
-        reply[:fp_uuid] = Facts['fp_uuid']
       end
 
       # Retrieve multiple facts from the node
@@ -52,10 +50,22 @@ module MCollective
         end
         reply[:values] = response
         reply[:instance_id] = Facts['instance_id']
-        reply[:fp_uuid] = Facts['fp_uuid']
       end
 
       action "prepare" do
+        reply[:instance_id] = Facts['instance_id']
+        reply[:status] = run("#{FP::Config.instance.cf_agent} prepare", :stdout => :stdout, :stderr => :stderr, :timeout => 600)
+      end
+
+      action "docker" do
+        begin
+          docker = FP::Docker.new(request, logger)
+          results = docker.perform
+          reply[:results] = results
+          reply[:instance_id] = Facts['instance_id']
+        rescue FP::Docker::InvalidParams
+          reply.fail $!.message
+        end
       end
 
     end

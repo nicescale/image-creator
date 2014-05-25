@@ -16,8 +16,9 @@
       ],
       "cluster_id": "mysqlcluster",
       "deploy_tags":{
-          "tag1": "var1",
-          "tag2": "var2"
+          "software_version": "5.6",
+          "name": "mysql-master",
+          "software": "mysql"
       }
     },
     "mysql": {
@@ -30,6 +31,11 @@
         "slave"
       ],
       "cluster_id": "mysqlcluster"
+      "deploy_tags":{
+          "software_version": "5.6",
+          "name": "mysql-slave",
+          "software": "mysql"
+      }
     },
     "mysql": {
       "port": 3307

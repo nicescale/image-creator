@@ -15,10 +15,6 @@ action "ping", :description => "show I'm alive" do
      output :msg,
             :description => "pong",
             :display_as  => "msg"
-     
-     output :fp_uuid,
-            :description => "FirstPaaS unique resource ID",
-            :display_as  => "fp_uuid"
 end
 
 action "checklist", :description => "Execute arbitary commands and return their results" do
@@ -44,10 +40,6 @@ action "checklist", :description => "Execute arbitary commands and return their 
      output :instance_id,
             :description => "instance ID of the instance",
             :display_as  => "instance_id"
-     
-     output :fp_uuid,
-            :description => "FirstPaaS unique resource ID",
-            :display_as  => "fp_uuid"
 end
 
 action "puppet_apply", :description => "Run puppet apply command immediately" do
@@ -73,10 +65,6 @@ action "puppet_apply", :description => "Run puppet apply command immediately" do
      output :instance_id,
             :description => "instance ID of the instance",
             :display_as  => "instance_id"
-     
-     output :fp_uuid,
-            :description => "FirstPaaS unique resource ID",
-            :display_as  => "fp_uuid"
 end
 
 action "get_facts", :description => "Retrieve multiple facts from the fact store" do
@@ -97,10 +85,6 @@ action "get_facts", :description => "Retrieve multiple facts from the fact store
      output :instance_id,
             :description => "instance ID of the instance",
             :display_as  => "instance_id"
-     
-     output :fp_uuid,
-            :description => "FirstPaaS unique resource ID",
-            :display_as  => "fp_uuid"
 end
 
 action "get_fact", :description => "Retrieve a single fact from the fact store" do
@@ -125,10 +109,6 @@ action "get_fact", :description => "Retrieve a single fact from the fact store" 
      output :instance_id,
             :description => "instance ID of the instance",
             :display_as  => "instance_id"
-     
-     output :fp_uuid,
-            :description => "FirstPaaS unique resource ID",
-            :display_as  => "fp_uuid"
 
     summarize do
         aggregate summary(:value)
@@ -137,15 +117,65 @@ end
 
 action "prepare", :description => "Download global variables before puppet apply" do
      display :always
-     output :checksum,
-            :description => "The SHA1 checksum of the downloaded file",
-            :display_as  => "checksum"
+     
+     output :stdout,
+            :description => "stdout of the command",
+            :display_as  => "stdout"
+
+     output :stderr,
+            :description => "stderr of the command",
+            :display_as  => "stderr"
+
+     output :status,
+            :description => "exit status of the command",
+            :display_as  => "status"
+     
+     output :instance_id,
+            :description => "instance ID of the instance",
+            :display_as  => "instance_id"
+end
+
+action "docker", :description => "Run docker commands" do
+     display :always
+     input :service_ids,
+           :prompt      => "service_ids",
+           :description => "Service ID",
+           :type        => :string,
+           :optional    => false,
+           :maxlength   => 2500
+     
+     input :docker_action,
+           :prompt      => "action",
+           :description => "The subcommand of our docker wrapper",
+           :type        => :string,
+           :optional    => false,
+           :maxlength   => 60
+     
+     input :service_action,
+           :prompt      => "service_action",
+           :description => "The subcommand of our docker wrapper's service command",
+           :type        => :string,
+           :optional    => true,
+           :maxlength   => 60
+     
+     input :service_action,
+           :prompt      => "service_action",
+           :description => "The subcommand of our docker wrapper's service command",
+           :type        => :string,
+           :optional    => true,
+           :maxlength   => 60
+
+     input :timeout,
+           :prompt      => "timeout",
+           :description => "maximum execute time",
+           :type        => :integer,
+           :optional    => true
      
      output :instance_id,
             :description => "instance ID of the instance",
             :display_as  => "instance_id"
      
-     output :fp_uuid,
-            :description => "FirstPaaS unique resource ID",
-            :display_as  => "fp_uuid"
+     output :results,
+            :description => "Docker execute result hash",
+            :display_as  => "results"
 end
