@@ -1,6 +1,7 @@
 require 'json'
 require 'fp/config'
 require 'fp/vars'
+require 'fp/docker'
 
 module MCollective
   module Agent
