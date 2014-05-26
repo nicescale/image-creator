@@ -139,8 +139,9 @@ action "docker", :description => "Run docker commands" do
      display :always
      input :service_ids,
            :prompt      => "service_ids",
-           :description => "Service ID",
+           :description => "Comma separated service IDs",
            :type        => :string,
+           :validation  => '^.+$',
            :optional    => false,
            :maxlength   => 2500
      
@@ -148,6 +149,7 @@ action "docker", :description => "Run docker commands" do
            :prompt      => "action",
            :description => "The subcommand of our docker wrapper",
            :type        => :string,
+           :validation  => '^.+$',
            :optional    => false,
            :maxlength   => 60
      
@@ -155,16 +157,10 @@ action "docker", :description => "Run docker commands" do
            :prompt      => "service_action",
            :description => "The subcommand of our docker wrapper's service command",
            :type        => :string,
+           :validation  => '^.+$',
            :optional    => true,
            :maxlength   => 60
      
-     input :service_action,
-           :prompt      => "service_action",
-           :description => "The subcommand of our docker wrapper's service command",
-           :type        => :string,
-           :optional    => true,
-           :maxlength   => 60
-
      input :timeout,
            :prompt      => "timeout",
            :description => "maximum execute time",
