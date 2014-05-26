@@ -49,7 +49,7 @@ collectives = ${mq_vhost}
 libdir = ${lib_dir}
 logfile = /var/log/mcollective.log
 loglevel = info
-daemonize = 1
+daemonize = 0
 identity = ${uuid}
 
 # Plugins
