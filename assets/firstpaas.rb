@@ -56,6 +56,9 @@ module MCollective
       action "prepare" do
         reply[:instance_id] = Facts['instance_id']
         reply[:status] = run("#{FP::Config.instance.cf_agent} prepare", :stdout => :stdout, :stderr => :stderr, :timeout => 600)
+        if reply[:status] == 0
+          run("#{FP::Config.instance.bin_dir}/facter -y > #{FP::Config.instance.mco_facts_yml}")
+        end
       end
 
       action "docker" do

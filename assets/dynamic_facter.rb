@@ -15,7 +15,8 @@ include MCollective::RPC
 
 def load_instance_ips
   dyn_vars_file = FP::Config.instance.dynamic_params_path
-  FileUtils.mkdir_p(dyn_vars_file) unless File.directory?(dyn_vars_file)
+  path = File.dirname(dyn_vars_file)
+  FileUtils.mkdir_p(path) unless File.directory?(path)
   rpc = rpcclient('firstpaas', :configfile => FP::Config.instance.mco_client_conf_path)
   rpc.verbose = false
   rpc.progress = false
