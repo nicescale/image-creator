@@ -2,6 +2,7 @@
 
 require 'json'
 require 'fp/config'
+require 'fp/vars'
 
 def parse_ini(file)
   return {} unless File.exists?(file)
@@ -39,9 +40,7 @@ end
 
 # The service IDs of this node
 def set_service_ids
-  manifest_file = FP::Config.instance.service_list_conf_path
-  return unless File.exists?(manifest_file) 
-  vars = JSON.parse(File.read(manifest_file))
+  vars = FP::Vars.services_on_this_instance
   service_ids = vars['modules'].keys.join(',')
   Facter.add(:service_ids) { setcode { service_ids} }
 end

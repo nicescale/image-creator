@@ -11,7 +11,7 @@ module FP
         return nil if ENV['CFAGENT_PREPARE']
         if services_on_this_instance.include?(service_id)
           # Lookup the module vars
-          local_vars_file = Config.instance.service_conf_path % service_id
+          local_vars_file = config.service_conf_path % ('m' + service_id)
           return nil unless File.exists?(local_vars_file)
           vars = JSON.parse(File.read(local_vars_file))
           get_namespace_var(vars, key, namespace)
@@ -30,10 +30,10 @@ module FP
 
       def get_auto_var_by_service(service_id, key)
         return nil if ENV['CFAGENT_PREPARE']
-        if !File.exists?(Config.instance.dynamic_params_path) or Time.now - File.mtime(AUTO_VARS_CACHE_TTL) >= AUTO_VARS_CACHE_TTL
-          `#{Config.instance.dynamic_facter_install_path}`
+        if !File.exists?(config.dynamic_params_path) or Time.now - File.mtime(AUTO_VARS_CACHE_TTL) >= AUTO_VARS_CACHE_TTL
+          `#{config.dynamic_facter_install_path}`
         end
-        vars = JSON.parse(File.read(Config.instance.dynamic_params_path))
+        vars = JSON.parse(File.read(config.dynamic_params_path))
         raise NotFound, "The key(#{key}) doesn't exist" unless vars[service_id].has_key?(key)
         vars[service_id][key]
       end
@@ -46,9 +46,9 @@ module FP
       end
 
       def get_global_var_by_service(service_id, key, namespace = nil)
-        return nil unless File.exists? Config.instance.global_vars_conf_path
+        return nil unless File.exists? config.global_vars_conf_path
         return nil if ENV['CFAGENT_PREPARE']
-        vars = JSON.parse(File.read(Config.instance.global_vars_conf_path))[service_id]
+        vars = JSON.parse(File.read(config.global_vars_conf_path))[service_id]
         return nil unless vars
         
         get_namespace_var(vars, key, namespace)
@@ -63,7 +63,12 @@ module FP
       end
 
       def services_on_this_instance
-        @instance_service_ids ||= JSON.parse(File.read(Config.instance.service_list_conf_path))['modules'].keys
+        manifest_file = config.service_list_conf_path
+        return [] unless File.exists?(manifest_file) 
+        
+        @instance_service_ids ||= JSON.parse(manifest_file))['modules'].keys.map { |sid|
+          sid.sub(/^m/, '')
+        }
       end
 
       def has_service?(service_id)
@@ -82,14 +87,18 @@ module FP
       end
 
       def find_service(cluster_id, role)
-        return {} unless cluster_id and File.exists?(Config.instance.global_vars_conf_path)
-        vars = JSON.parse(File.read(Config.instance.global_vars_conf_path))
+        return {} unless cluster_id and File.exists?(config.global_vars_conf_path)
+        vars = JSON.parse(File.read(config.global_vars_conf_path))
 
         vars.select { |sid, spec|
           next unless spec['meta'] and spec['meta']['cluster_id'] and spec['meta']['tags']
 
           spec['meta']['cluster_id'] == cluster_id and spec['meta']['tags'].include?(role)
         }
+      end
+      
+      def config
+        Config.instance
       end
     
     end
