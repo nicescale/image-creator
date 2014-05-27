@@ -7,11 +7,11 @@
 init_conf_dir=$(dirname ${init_conf_path})
 
 function get_mac {
-  /sbin/ifconfig|grep HWaddr|grep P '^eth'|awk '{print $NF}'|sort|tr -d '\n'|tr '[:upper:]' '[:lower:]'
+  /sbin/ifconfig|grep HWaddr|grep -P '^eth'|awk '{print $NF}'|sort|tr -d '\n'|tr '[:upper:]' '[:lower:]'
 }
 
 function get_ip {
-  /sbin/ifconfig|grep 'inet '|grep -v '127\.'|awk -F: '{print $2}'|awk '{print $1}'|sort|tr -d '\n'
+  /sbin/ifconfig|grep -A 4 -P '^eth'| grep 'inet '|awk -F: '{print $2}'|awk '{print $1}'|sort|tr -d '\n'
 }
 
 function check_iaas_env {
@@ -93,7 +93,8 @@ plugin.rabbitmq.pool.1.password = ${key}
 factsource = yaml
 plugin.yaml = ${conf_dir}/facts.yaml
 EOS
-  service mcollective restart
+  cp /opt/nicescale/support/etc/mcollective.conf /etc/init/
+  start mcollective
 }
 
 # Remove the first boot marker file and this script
