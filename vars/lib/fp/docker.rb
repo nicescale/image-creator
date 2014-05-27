@@ -25,10 +25,10 @@ module FP
 
     def run(service_id)
       tags = FP::Vars.get_global_var_by_service(service_id, 'deploy_tags', 'meta')
-      service_name = tags['name']
+      service_name = tags['service_name']
       software_version = tags['software_version']
       software = tags['software']
-      sh('run', software, software_version, service_id)
+      sh('run', software, software_version, service_name, service_id)
     end
 
     def service(service_id)
