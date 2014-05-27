@@ -19,7 +19,7 @@ function check_iaas_env {
   # This approach is too fragile.
   if /bin/hostname|grep -qP '^i-.+'; then
     iaas=qingcloud
-  elif curl --connect-timeout 1 http://169.254.169.254/2007-01-19/meta-data/public-hostname|grep -q amazon; then
+  elif curl --connect-timeout 1 http://169.254.169.254/2007-01-19/meta-data/local-ipv4 -o /dev/null 2>/dev/null; then
     iaas=aws
   fi
 }
