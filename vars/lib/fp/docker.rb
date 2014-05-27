@@ -24,7 +24,7 @@ module FP
     end
 
     def run(service_id)
-      tags = FP::Vars.get_global_var_by_service(service_id, 'deploy_tags', 'meta')
+      tags = FP::Vars.get_service_var(service_id, 'deploy_tags', 'meta')
       service_name = tags['service_name']
       software_version = tags['software_version']
       software = tags['software']
@@ -57,6 +57,7 @@ module FP
       }
       params.unshift(docker_exe)
       cmd = Shellwords.join(params)
+      @logger.info "Begin to run docker command: #{cmd}"
       status = MCollective::Shell.new(cmd, options).runcommand
       @logger.info "Docker command: #{cmd} exited with #{status.exitstatus}"
       
@@ -64,7 +65,6 @@ module FP
         stdout: stdout,
         stderr: stderr,
         status: status.exitstatus,
-        service_id: params.first
       }
     end
 
