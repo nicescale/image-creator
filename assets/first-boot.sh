@@ -7,7 +7,7 @@
 init_conf_dir=$(dirname ${init_conf_path})
 
 function get_mac {
-  /sbin/ifconfig|grep HWaddr|awk '{print $NF}'|sort|tr -d '\n'|tr '[:upper:]' '[:lower:]'
+  /sbin/ifconfig|grep HWaddr|grep P '^eth'|awk '{print $NF}'|sort|tr -d '\n'|tr '[:upper:]' '[:lower:]'
 }
 
 function get_ip {
