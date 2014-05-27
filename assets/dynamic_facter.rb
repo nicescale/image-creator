@@ -1,11 +1,12 @@
 #!/opt/nicescale/support/bin/ruby
 
 require 'mcollective'
-require 'syslog'
 require 'fileutils'
 require 'tempfile'
 require 'json'
 require 'fp/config'
+require 'timeout'
+require 'logger'
 
 include MCollective::RPC
 
@@ -46,5 +47,12 @@ def single_instance(&block)
 end
 
 single_instance do
-  load_instance_ips
+  begin
+    Timeout.timeout(120) {
+      load_instance_ips
+    }
+  rescue => e
+    logger = Logger.new('/var/log/facter.log')
+    logger.error "Failed to load facts: errtype(#{e.class}), errmsg(#{e.message})"
+  end
 end

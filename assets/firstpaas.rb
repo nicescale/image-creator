@@ -64,7 +64,7 @@ module MCollective
           results = docker.perform
           reply[:results] = results
           reply[:instance_id] = Facts['instance_id']
-        rescue FP::Docker::InvalidParams
+        rescue FP::InvalidParams
           reply.fail $!.message
         end
       end
