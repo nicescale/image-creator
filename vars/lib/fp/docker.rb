@@ -18,7 +18,7 @@ module FP
       results = {}
       @service_ids.each { |service_id|
         next unless FP::Vars.has_service?(service_id)
-        results[service_id] = self.__send__(@action.to_sym)
+        results[service_id] = self.__send__(@action.to_sym, service_id)
       }
       results
     end
