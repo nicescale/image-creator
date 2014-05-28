@@ -81,7 +81,7 @@ describe FP::Vars do
     allow(File).to receive(:read).with(FP::Config.instance.global_vars_conf_path).and_return(global_vars.to_json)
     allow(File).to receive(:read).with(FP::Config.instance.dynamic_params_path).and_return(auto_vars.to_json)
     allow(File).to receive(:read).with(FP::Config.instance.service_list_conf_path).and_return(instance_manifest.to_json)
-    allow(File).to receive(:read).with(FP::Config.instance.service_conf_path % service_id).and_return(module_vars.to_json)
+    allow(File).to receive(:read).with(FP::Config.instance.service_conf_path % ('m' + service_id)).and_return(module_vars.to_json)
   }
 
   describe "::get_global_var_by_service" do

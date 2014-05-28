@@ -1,0 +1,8 @@
+require 'mcollective'
+require 'shellwords'
+require 'json'
+require 'fp/node/config'
+require 'fp/node/util'
+require 'fp/node/vars'
+require 'fp/node/docker'
+require 'fp/node/cfagent'

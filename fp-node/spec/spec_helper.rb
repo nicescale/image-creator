@@ -1,2 +1,2 @@
 $:.unshift File.expand_path('../../lib', __FILE__)
-require 'fp/vars'
+require 'fp/node'

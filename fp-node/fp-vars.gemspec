@@ -1,10 +1,10 @@
 # -*- encoding: utf-8 -*-
 $:.unshift(File.expand_path('../lib', __FILE__))
-require 'fp/vars'
+require 'fp/node/version'
 
 Gem::Specification.new do |s|
-  s.name         = 'fp-vars'
-  s.version      = FP::Vars::VERSION
+  s.name         = 'fp-node'
+  s.version      = FP::VERSION
   s.platform     = Gem::Platform::RUBY
   s.summary      = 'FirstPaaS global variables helper library'
   s.description  = "#{`git rev-parse HEAD`[0, 6]}"

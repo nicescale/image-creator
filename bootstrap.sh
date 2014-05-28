@@ -54,7 +54,7 @@ ${bin_dir}/first-boot.sh
 exit 0
 EOS
 
-cd $SOURCE_DIR/vars
+cd $SOURCE_DIR/fp-node
 ns_vars_gem=`$bin_dir/gem build vars.gemspec|grep File|awk '{print $2}'`
 $bin_dir/gem install --local --no-ri --no-rdoc $ns_vars_gem
 

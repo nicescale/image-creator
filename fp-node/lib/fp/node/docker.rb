@@ -1,15 +1,12 @@
-require 'fp/config'
-require 'mcollective'
-require 'shellwords'
-
 module FP
   class Docker
 
-    def initialize(params, logger)
+    def initialize(params, logger = nil)
       @service_ids = params[:service_ids].split(',')
       @action = params[:docker_action]
       @service_action = params[:service_action]
-      @timeout = params[:timeout] || Config.instance.docker_cmd_timeout.to_i
+      @config = Config.instance
+      @timeout = params[:timeout] || @config.docker_cmd_timeout.to_i
       @logger = logger
     end
 
@@ -17,18 +14,22 @@ module FP
     def perform
       results = {}
       @service_ids.each { |service_id|
-        next unless FP::Vars.has_service?(service_id)
+        next unless Vars.has_service?(service_id)
         results[service_id] = self.__send__(@action.to_sym, service_id)
       }
       results
     end
 
-    def run(service_id)
-      tags = FP::Vars.get_service_var(service_id, 'deploy_tags', 'meta')
+    def run(service_id, action = 'run')
+      tags = Vars.get_service_var(service_id, 'deploy_tags', 'meta')
       service_name = tags['service_name']
-      software_version = tags['software_version']
-      software = tags['software']
-      sh('run', software, software_version, service_name, service_id)
+      image_version = tags['image_version']
+      image_name = tags['image_name']
+      sh(action, image_name, image_version, service_name, service_id)
+    end
+
+    def prepare(service_id)
+      run(service_id, 'prepare')
     end
 
     def service(service_id)
@@ -48,30 +49,17 @@ module FP
     # Run a docker command.
     # The first parameter must be 'service_id'.
     def sh(*params)
-      stdout = ''
-      stderr = ''
-      options = {
-        'stdout' => stdout,
-        'stderr' => stderr,
-        'timeout' => @timeout
-      }
       params.unshift(docker_exe)
-      cmd = Shellwords.join(params)
-      @logger.info "Begin to run docker command: #{cmd}"
-      status = MCollective::Shell.new(cmd, options).runcommand
-      @logger.info "Docker command: #{cmd} exited with #{status.exitstatus}"
-      
-      {
-        stdout: stdout,
-        stderr: stderr,
-        status: status.exitstatus,
-      }
+      @logger.info "Begin to run docker command: #{params.join(' ')}" if @logger
+      ret = Util.sh(params)
+      @logger.info "Docker command: #{params.join(' ')} exited with #{status.exitstatus}" if @logger
+      ret
     end
 
 
     private
     def docker_exe
-      Config.instance.docker_wrapper
+      @config.docker_wrapper
     end
   end
 

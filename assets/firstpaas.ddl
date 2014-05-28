@@ -115,20 +115,12 @@ action "get_fact", :description => "Retrieve a single fact from the fact store" 
     end
 end
 
-action "prepare", :description => "Download global variables before puppet apply" do
+action "prepare", :description => "Prepare service runtime environment" do
      display :always
      
-     output :stdout,
-            :description => "stdout of the command",
-            :display_as  => "stdout"
-
-     output :stderr,
-            :description => "stderr of the command",
-            :display_as  => "stderr"
-
-     output :status,
-            :description => "exit status of the command",
-            :display_as  => "status"
+     output :results,
+            :description => "result of the prepare commands",
+            :display_as  => "results"
      
      output :instance_id,
             :description => "instance ID of the instance",

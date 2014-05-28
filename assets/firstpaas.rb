@@ -1,7 +1,5 @@
 require 'json'
-require 'fp/config'
-require 'fp/vars'
-require 'fp/docker'
+require 'fp/node'
 
 module MCollective
   module Agent
@@ -27,12 +25,11 @@ module MCollective
       end
 
       action "puppet_apply" do
-        if request[:force_reload_facts]
-          run(FP::Config.instance.dynamic_facter_install_path)
-        end
-        
         reply[:instance_id] = Facts['instance_id']
-        reply[:status] = run("#{FP::Config.instance.cf_agent} apply", :stdout => :stdout, :stderr => :stderr, :timeout => 600)
+        ret = FP::CFAgent.apply(request[:force_reload_facts])
+        reply[:status] = ret[:status]
+        reply[:stdout] = ret[:stdout]
+        reply[:stderr] = ret[:stderr]
       end
 
       # Retrieve a single fact from the node
@@ -55,10 +52,7 @@ module MCollective
 
       action "prepare" do
         reply[:instance_id] = Facts['instance_id']
-        reply[:status] = run("#{FP::Config.instance.cf_agent} prepare", :stdout => :stdout, :stderr => :stderr, :timeout => 600)
-        if reply[:status] == 0
-          run("#{FP::Config.instance.bin_dir}/facter -y > #{FP::Config.instance.mco_facts_yml}")
-        end
+        reply[:results] = FP::CFAgent.prepare
       end
 
       action "docker" do

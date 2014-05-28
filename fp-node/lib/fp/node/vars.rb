@@ -1,9 +1,5 @@
-require 'json'
-require 'fp/config'
-
 module FP
   class Vars
-    VERSION = '0.1.0'
     AUTO_VARS_CACHE_TTL = 60
 
     class << self
@@ -66,7 +62,7 @@ module FP
         manifest_file = config.service_list_conf_path
         return [] unless File.exists?(manifest_file) 
         
-        @instance_service_ids ||= JSON.parse(manifest_file))['modules'].keys.map { |sid|
+        @instance_service_ids ||= JSON.parse(File.read(manifest_file))['modules'].keys.map { |sid|
           sid.sub(/^m/, '')
         }
       end
