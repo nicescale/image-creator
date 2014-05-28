@@ -1,8 +1,5 @@
 # A plugin for gathering config data from FirstPaaS center.
-
-require 'json'
-require 'fp/config'
-require 'fp/vars'
+require 'fp/node'
 
 def parse_ini(file)
   return {} unless File.exists?(file)

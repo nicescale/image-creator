@@ -1,10 +1,8 @@
 #!/opt/nicescale/support/bin/ruby
 
-require 'mcollective'
 require 'fileutils'
 require 'tempfile'
-require 'json'
-require 'fp/config'
+require 'fp/node'
 require 'timeout'
 require 'logger'
 
