@@ -5,7 +5,7 @@ module FP
   class Util
     class << self
       def sh(args, timeout = nil)
-        timeout ||= Config.instance.cmd_timeout
+        timeout ||= Config.instance.cmd_timeout.to_i
         stdout = ''
         stderr = ''
         options = {

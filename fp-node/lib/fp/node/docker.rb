@@ -6,7 +6,7 @@ module FP
       @action = params[:docker_action]
       @service_action = params[:service_action]
       @config = Config.instance
-      @timeout = params[:timeout] || @config.docker_cmd_timeout.to_i
+      @timeout = params[:timeout] || @config.cmd_timeout.to_i
       @logger = logger
     end
 
@@ -52,7 +52,7 @@ module FP
       params.unshift(docker_exe)
       @logger.info "Begin to run docker command: #{params.join(' ')}" if @logger
       ret = Util.sh(params)
-      @logger.info "Docker command: #{params.join(' ')} exited with #{status.exitstatus}" if @logger
+      @logger.info "Docker command: #{params.join(' ')} exited with #{ret[:status]}" if @logger
       ret
     end
 
