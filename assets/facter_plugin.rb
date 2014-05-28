@@ -45,24 +45,5 @@ def set_service_ids
   Facter.add(:service_ids) { setcode { service_ids} }
 end
 
-# Set the tags of this instance
-# NB. Must be run after set_service_ids
-def set_tags
-  global_vars_file = FP::Config.instance.global_vars_conf_path
-  return unless File.exists?(global_vars_file)
-  vars = JSON.parse(File.read(global_vars_file))
-  service_ids = Facter[:service_ids].value.split(',')
-  service_ids.each { |sid|
-    tags = vars[sid]['meta']['deploy_tags']
-    next unless tags and tags.kind_of?(Hash)
-    tags.each_pair { |tkey, tval|
-      Facter.add("tag_#{tkey}".to_sym) {
-        setcode { tval }
-      }
-    }
-  }
-end
-
 load_initial_vars
 set_service_ids
-set_tags
