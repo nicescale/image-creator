@@ -37,8 +37,7 @@ end
 
 # The service IDs of this node
 def set_service_ids
-  vars = FP::Vars.services_on_this_instance
-  service_ids = vars['modules'].keys.join(',')
+  service_ids = FP::Vars.services_on_this_instance.join(',')
   Facter.add(:service_ids) { setcode { service_ids} }
 end
 
