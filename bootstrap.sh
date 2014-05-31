@@ -5,17 +5,12 @@ SOURCE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd /tmp
 if `which apt-get >/dev/null` && test -x `which apt-get`; then
   apt-get install -y libssl-dev libsqlite3-dev build-essential libreadline6-dev zlib1g-dev libyaml-dev libffi-dev git
+  echo "deb package is yet to come"
+  exit 1
 elif `which yum >/dev/null` && test -x `which yum`; then
-  yum groupinstall -y "Development Tools"
-  yum install -y libffi-devel git libyaml-devel openssl-devel sqlite-devel readline-devel zlib-devel
+  wget https://s3-us-west-2.amazonaws.com/nicescale-data/rpm/ns-ruby-1.9.3-1.x86_64.rpm
+  yum localinstall ns-ruby-1.9.3-1.x86_64.rpm
 fi
-
-wget http://cache.ruby-lang.org/pub/ruby/1.9/ruby-1.9.3-p547.tar.gz
-tar xf ruby-1.9.3-p547.tar.gz
-cd ruby-1.9.3-p547
-./configure --prefix=${ruby_prefix} --disable-install-doc --disable-install-capi --disable-install-doc
-make -j8 > /tmp/build.log 2>&1
-make install
 
 ${ruby_prefix}/bin/gem install --no-ri --no-rdoc facter hiera stomp parseconfig
 
@@ -32,10 +27,6 @@ git clone https://github.com/puppetlabs/puppet.git
 cd puppet
 git checkout 3.6.0 -b v3.6.0
 ${ruby_prefix}/bin/ruby install.rb --no-rdoc --configdir=${puppet_conf_dir} --bindir=${bin_dir}
-
-for f in `ls ${ruby_prefix}/bin`; do
-  ln -s ${ruby_prefix}/bin/$f ${bin_dir}/$f
-done
 
 # First boot script
 install -D -m 0644 $SOURCE_DIR/assets/firstpaas.rb ${mco_plugin_dir}/mcollective/agent/firstpaas.rb
