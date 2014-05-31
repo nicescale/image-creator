@@ -29,6 +29,8 @@ NiceScale management helper package.
 
 %prep
 yum groupinstall -y "Development Tools"
+yum install -y libffi-devel libyaml-devel openssl-devel sqlite-devel readline-devel zlib-devel
+
 [ -f ruby-1.9.3-p547.tar.gz ] && rm -f ruby-1.9.3-p547.tar.gz
 wget http://cache.ruby-lang.org/pub/ruby/1.9/ruby-1.9.3-p547.tar.gz
 [ -d ruby-1.9.3-p547 ] && rm -fr ruby-1.9.3-p547

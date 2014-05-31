@@ -8,8 +8,14 @@ if `which apt-get >/dev/null` && test -x `which apt-get`; then
   echo "deb package is yet to come"
   exit 1
 elif `which yum >/dev/null` && test -x `which yum`; then
-  wget https://s3-us-west-2.amazonaws.com/nicescale-data/rpm/ns-ruby-1.9.3-1.x86_64.rpm
-  yum localinstall ns-ruby-1.9.3-1.x86_64.rpm
+  if curl --connect-timeout 1 169.254.169.254; then
+    rpm_file=ns-ruby-1.9.3-1.ami.x86_64.rpm
+    wget https://s3-us-west-2.amazonaws.com/nicescale-data/rpm/$rpm_file
+  else
+    rpm_file=ns-ruby-1.9.3-1.centos-6.5.x86_64.rpm
+    wget http://s3-us-west-2.amazonaws.com/nicescale-data/rpm/$rpm_file
+  fi
+  yum -y localinstall $rpm_file
 fi
 
 ${ruby_prefix}/bin/gem install --no-ri --no-rdoc facter hiera stomp parseconfig
