@@ -10,10 +10,13 @@ if `which apt-get >/dev/null` && test -x `which apt-get`; then
 elif `which yum >/dev/null` && test -x `which yum`; then
   if curl --connect-timeout 1 169.254.169.254; then
     rpm_file=ns-ruby-1.9.3-1.ami.x86_64.rpm
-    wget https://s3-us-west-2.amazonaws.com/nicescale-data/rpm/$rpm_file
   else
     rpm_file=ns-ruby-1.9.3-1.centos-6.5.x86_64.rpm
-    wget http://s3-us-west-2.amazonaws.com/nicescale-data/rpm/$rpm_file
+  fi
+  wget http://s3-us-west-2.amazonaws.com/nicescale-data/rpm/$rpm_file
+  if ! test -f $rpm_file; then
+    echo "Failed to download RPM file($rpm_file)"
+    exit 2
   fi
   yum -y localinstall $rpm_file
 fi
@@ -52,7 +55,7 @@ exit 0
 EOS
 
 cd $SOURCE_DIR/fp-node
-ns_vars_gem=`$bin_dir/gem build vars.gemspec|grep File|awk '{print $2}'`
+ns_vars_gem=`$bin_dir/gem build fp-node.gemspec|grep File|awk '{print $2}'`
 $bin_dir/gem install --local --no-ri --no-rdoc $ns_vars_gem
 
 # logrotate
