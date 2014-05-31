@@ -2,7 +2,16 @@
 SOURCE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SOURCE_DIR}/assets/nicescale.conf
 
-cd /tmp
+TMP_PATH=/tmp/`head -c 1000 /dev/urandom |tr -dc 'a-z0-9A-Z'|tail -c 10`
+mkdir -p $TMP_PATH
+
+function cleanup {
+  echo "Removing temporary directory $TMP_PATH"
+  test "$TMP_PATH" = "/tmp" || rm -fr $TMP_PATH
+}
+trap cleanup EXIT
+
+cd $TMP_PATH
 if `which apt-get >/dev/null` && test -x `which apt-get`; then
   apt-get install -y libssl-dev libsqlite3-dev build-essential libreadline6-dev zlib1g-dev libyaml-dev libffi-dev git
   echo "deb package is yet to come"
@@ -23,14 +32,14 @@ fi
 
 ${ruby_prefix}/bin/gem install --no-ri --no-rdoc facter hiera stomp parseconfig
 
-cd /tmp
+cd $TMP_PATH
 git clone https://github.com/mountkin/marionette-collective.git
 cd marionette-collective
 git checkout v2.5.1-patched
 mco_conf_path=`dirname ${mco_client_conf_path}`
 ${ruby_prefix}/bin/ruby install.rb --no-rdoc --plugindir=${mco_plugin_dir} --configdir=${mco_conf_path} --bindir=${bin_dir} --sbindir=${sbin_dir}
 
-cd /tmp
+cd $TMP_PATH
 
 git clone https://github.com/puppetlabs/puppet.git
 cd puppet
