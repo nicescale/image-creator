@@ -14,7 +14,7 @@ trap cleanup EXIT
 function checksum {
   local md5=$1
   local file=$2
-  local calculated_md5=`md5sum $f|cut -d ' ' -f 1`
+  local calculated_md5=`md5sum $file|cut -d ' ' -f 1`
   if test "$calculated_md5" = "$md5"; then
     return 0
   fi
@@ -23,7 +23,7 @@ function checksum {
 }
 
 cd $TMP_PATH
-if `which apt-get >/dev/null` && test -x `which apt-get`; then
+if `which apt-get >/dev/null 2>&1` && test -x `which apt-get`; then
   deb_pkg=ns-ruby_1.9.3-p547_amd64.deb
   md5='2352f3ddc38e4dca3371e2af4b057b15'
   wget http://s3-us-west-2.amazonaws.com/nicescale-data/deb/$deb_pkg
