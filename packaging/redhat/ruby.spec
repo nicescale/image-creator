@@ -14,18 +14,11 @@ Requires: sqlite
 Requires: readline
 Requires: zlib
 
-BuildRequires: libffi-devel
-BuildRequires: libyaml-devel
-BuildRequires: openssl-devel
-BuildRequires: sqlite-devel
-BuildRequires: readline-devel
-BuildRequires: zlib-devel
-
 BuildArch: x86_64
 
-
 %description
-NiceScale management helper package.
+A dynamic, open source programming language with a focus on simplicity and 
+productivity. It has an elegant syntax that is natural to read and easy to write.
 
 %prep
 yum groupinstall -y "Development Tools"
@@ -38,7 +31,7 @@ tar -zxf ruby-1.9.3-p547.tar.gz
 
 %build
 cd ruby-1.9.3-p547
-./configure --prefix=%{ruby_prefix} --disable-install-doc --disable-install-capi --disable-install-doc
+./configure --prefix=%{ruby_prefix} --disable-install-doc --disable-install-capi --disable-install-doc --bindir=%{bin_dir} --sbindir=%{sbin_dir}
 make -j8
 
 %install
@@ -64,17 +57,10 @@ install -d -m 0755 $RPM_BUILD_ROOT/%{ns_config_dir}
 %pre
 
 %post
-for f in `ls %{ruby_prefix}/bin`; do
-  ln -s %{ruby_prefix}/bin/$f %{bin_dir}/$f
-done
 
 %preun
 
 %postun
-bin_dir=/opt/nicescale/support/bin
-for f in `ls $bin_dir`; do
-  [ -L $bin_dir/$f ] && unlink $bin_dir/$f
-done
 
 %changelog
 * Sat May 31 2014 mountkin@gmail.com

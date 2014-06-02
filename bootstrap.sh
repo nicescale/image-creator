@@ -47,21 +47,21 @@ elif `which yum >/dev/null` && test -x `which yum`; then
   yum -y localinstall $rpm_file
 fi
 
-${ruby_prefix}/bin/gem install --no-ri --no-rdoc facter hiera stomp parseconfig
+$bin_dir/gem install --no-ri --no-rdoc facter hiera stomp parseconfig
 
 cd $TMP_PATH
 git clone https://github.com/mountkin/marionette-collective.git
 cd marionette-collective
 git checkout v2.5.1-patched
 mco_conf_path=`dirname ${mco_client_conf_path}`
-${ruby_prefix}/bin/ruby install.rb --no-rdoc --plugindir=${mco_plugin_dir} --configdir=${mco_conf_path} --bindir=${bin_dir} --sbindir=${sbin_dir}
+${bin_dir}/ruby install.rb --no-rdoc --plugindir=${mco_plugin_dir} --configdir=${mco_conf_path} --bindir=${bin_dir} --sbindir=${sbin_dir}
 
 cd $TMP_PATH
 
 git clone https://github.com/puppetlabs/puppet.git
 cd puppet
 git checkout 3.6.0 -b v3.6.0
-${ruby_prefix}/bin/ruby install.rb --no-rdoc --configdir=${puppet_conf_dir} --bindir=${bin_dir}
+${bin_dir}/ruby install.rb --no-rdoc --configdir=${puppet_conf_dir} --bindir=${bin_dir}
 
 # First boot script
 install -D -m 0644 $SOURCE_DIR/assets/firstpaas.rb ${mco_plugin_dir}/mcollective/agent/firstpaas.rb
