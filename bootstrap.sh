@@ -29,14 +29,14 @@ if `which apt-get >/dev/null 2>&1` && test -x `which apt-get`; then
   wget http://s3-us-west-2.amazonaws.com/nicescale-data/deb/$deb_pkg
   checksum $md5 $deb_pkg
   dpkg -i $deb_pkg 
-  apt-get install -f
+  apt-get install -y -f
 elif `which yum >/dev/null` && test -x `which yum`; then
   if grep -q 'Amazon Linux AMI' /etc/issue; then
     rpm_file=ns-ruby-1.9.3-1.ami.x86_64.rpm
-    md5='b973cc4a7c77656aaa86bf4bff85a42b'
+    md5='107978b0d73893eacf4b80f39aa4daf4'
   else
     rpm_file=ns-ruby-1.9.3-1.centos-6.5.x86_64.rpm
-    md5='caa75e3d6c776e98fd8618ee31926a09'
+    md5='e0e5b47829b475693823b8414d406687'
   fi
   wget http://s3-us-west-2.amazonaws.com/nicescale-data/rpm/$rpm_file
   if ! test -f $rpm_file; then
