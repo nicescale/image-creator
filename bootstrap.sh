@@ -11,22 +11,39 @@ function cleanup {
 }
 trap cleanup EXIT
 
+function checksum {
+  local md5=$1
+  local file=$2
+  local calculated_md5=`md5sum $f|cut -d ' ' -f 1`
+  if test "$calculated_md5" = "$md5"; then
+    return 0
+  fi
+  echo "File $file checksum mismatch. calculated: $calculated_md5, expected: $md5"
+  exit 1
+}
+
 cd $TMP_PATH
 if `which apt-get >/dev/null` && test -x `which apt-get`; then
-  apt-get install -y libssl-dev libsqlite3-dev build-essential libreadline6-dev zlib1g-dev libyaml-dev libffi-dev git
-  echo "deb package is yet to come"
-  exit 1
+  deb_pkg=ns-ruby_1.9.3-p547_amd64.deb
+  md5='2352f3ddc38e4dca3371e2af4b057b15'
+  wget http://s3-us-west-2.amazonaws.com/nicescale-data/deb/$deb_pkg
+  checksum $md5 $deb_pkg
+  dpkg -i $deb_pkg 
+  apt-get install -f
 elif `which yum >/dev/null` && test -x `which yum`; then
-  if curl --connect-timeout 1 169.254.169.254; then
+  if grep -q 'Amazon Linux AMI' /etc/issue; then
     rpm_file=ns-ruby-1.9.3-1.ami.x86_64.rpm
+    md5='b973cc4a7c77656aaa86bf4bff85a42b'
   else
     rpm_file=ns-ruby-1.9.3-1.centos-6.5.x86_64.rpm
+    md5='caa75e3d6c776e98fd8618ee31926a09'
   fi
   wget http://s3-us-west-2.amazonaws.com/nicescale-data/rpm/$rpm_file
   if ! test -f $rpm_file; then
     echo "Failed to download RPM file($rpm_file)"
     exit 2
   fi
+  checksum $md5 $rpm_file
   yum -y localinstall $rpm_file
 fi
 
