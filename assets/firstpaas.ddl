@@ -17,31 +17,6 @@ action "ping", :description => "show I'm alive" do
             :display_as  => "msg"
 end
 
-action "checklist", :description => "Execute arbitary commands and return their results" do
-     display :always
-     input :checklist,
-           :prompt      => "checklist",
-           :description => "JSON encoded checklist",
-           :type        => :string,
-           :optional    => false,
-           :validation  => '^\{.+\}$',
-           :maxlength   => 2048
-
-     input :timeout,
-           :prompt      => "timeout",
-           :description => "maximum execute time for each check item",
-           :type        => :integer,
-           :optional    => true
-
-     output :result,
-            :description => "Execute results of each check items.",
-            :display_as  => "result"
-     
-     output :instance_id,
-            :description => "instance ID of the instance",
-            :display_as  => "instance_id"
-end
-
 action "puppet_apply", :description => "Run puppet apply command immediately" do
      display :always
      input :force_reload_facts,

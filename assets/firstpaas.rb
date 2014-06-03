@@ -9,21 +9,6 @@ module MCollective
         reply[:instance_id] = Facts['instance_id']
       end
       
-      # Run each checklist and return their results.
-      action "checklist" do
-        checklist = JSON.parse(request[:checklist])
-        timeout = request[:timeout] || 5
-        result = {}
-        checklist.each_pair { |cmd_name, cmd|
-          item = {:cmd => cmd, :status => 0, :stdout => '', :stderr => ''}
-          item[:status] = run(cmd, :stdout => item[:stdout], :stderr => item[:stderr], :timeout => timeout)
-          result[cmd_name] = item
-        }
-
-        reply[:result] = result
-        reply[:instance_id] = Facts['instance_id']
-      end
-
       action "puppet_apply" do
         reply[:instance_id] = Facts['instance_id']
         ret = FP::CFAgent.apply(request[:force_reload_facts])
