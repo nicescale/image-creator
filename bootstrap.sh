@@ -32,7 +32,12 @@ function get_github_archive {
 }
 
 cd $TMP_PATH
-if `which apt-get >/dev/null 2>&1` && test -x `which apt-get`; then
+pkg_manager=yum
+if grep -qiP "ubuntu|debian" /etc/issue; then
+  pkg_manager="apt-get"
+fi
+
+if test "$pkg_manager" = "apt-get"; then
   apt-get install -y unzip libssl1.0.0 libsqlite3-0 libyaml-0-2 libffi6 zlib1g libreadline6 wget debianutils
   deb_pkg=ns-ruby_1.9.3-p547_amd64.deb
   md5='ab4c172dee641a68cee2528cc4869393'
@@ -40,7 +45,7 @@ if `which apt-get >/dev/null 2>&1` && test -x `which apt-get`; then
   checksum $md5 $deb_pkg
   dpkg -i $deb_pkg 
   apt-get install -y -f
-elif `which yum >/dev/null` && test -x `which yum`; then
+elif test "$pkg_manager" = "yum"; then
   yum install -y unzip wget which
   if ! grep -riq epel /etc/yum.repos.d/; then
     wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
