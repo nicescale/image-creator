@@ -42,6 +42,10 @@ if `which apt-get >/dev/null 2>&1` && test -x `which apt-get`; then
   apt-get install -y -f
 elif `which yum >/dev/null` && test -x `which yum`; then
   yum install -y unzip wget
+  if ! grep -riq epel /etc/yum.repos.d/; then
+    wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+    rpm -ivh epel-release-6-8.noarch.rpm
+  fi
   if grep -q 'Amazon Linux AMI' /etc/issue; then
     rpm_file=ns-ruby-1.9.3-1.ami.x86_64.rpm
     md5='107978b0d73893eacf4b80f39aa4daf4'
