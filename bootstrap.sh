@@ -30,7 +30,7 @@ function get_github_archive {
     fail "Failed to download $url"
   fi
   mkdir files
-  unzip -d files $archive
+  unzip -q -d files $archive
   cd files/`ls files`
 }
 
