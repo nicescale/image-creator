@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.email        = 'mountkin@gmail.com'
   s.required_ruby_version = Gem::Requirement.new('>= 1.9.3')
 
-  s.files        = `git ls-files -- *`.split("\n")
+  s.files        = Dir.glob('**/*').select { |x| File.file? x }
   s.require_path = 'lib'
   
   s.add_dependency 'parseconfig'
