@@ -33,9 +33,9 @@ function get_github_archive {
 
 cd $TMP_PATH
 if `which apt-get >/dev/null 2>&1` && test -x `which apt-get`; then
-  apt-get install -y unzip
+  apt-get install -y unzip libssl1.0.0 libsqlite3-0 libyaml-0-2 libffi6 zlib1g libreadline6
   deb_pkg=ns-ruby_1.9.3-p547_amd64.deb
-  md5='2352f3ddc38e4dca3371e2af4b057b15'
+  md5='ab4c172dee641a68cee2528cc4869393'
   wget http://s3-us-west-2.amazonaws.com/nicescale-data/deb/$deb_pkg
   checksum $md5 $deb_pkg
   dpkg -i $deb_pkg 
