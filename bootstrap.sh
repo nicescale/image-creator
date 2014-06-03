@@ -22,8 +22,18 @@ function checksum {
   exit 1
 }
 
+function get_github_archive {
+  local url="$1"
+  local archive=`echo $url|awk -F '/' '{print $NF}'`
+  wget --output-document=$archive $url
+  mkdir files
+  unzip -d files $archive
+  cd files/`ls files`
+}
+
 cd $TMP_PATH
 if `which apt-get >/dev/null 2>&1` && test -x `which apt-get`; then
+  apt-get install -y unzip
   deb_pkg=ns-ruby_1.9.3-p547_amd64.deb
   md5='2352f3ddc38e4dca3371e2af4b057b15'
   wget http://s3-us-west-2.amazonaws.com/nicescale-data/deb/$deb_pkg
@@ -31,6 +41,7 @@ if `which apt-get >/dev/null 2>&1` && test -x `which apt-get`; then
   dpkg -i $deb_pkg 
   apt-get install -y -f
 elif `which yum >/dev/null` && test -x `which yum`; then
+  yum install -y unzip
   if grep -q 'Amazon Linux AMI' /etc/issue; then
     rpm_file=ns-ruby-1.9.3-1.ami.x86_64.rpm
     md5='107978b0d73893eacf4b80f39aa4daf4'
@@ -50,17 +61,12 @@ fi
 $bin_dir/gem install --no-ri --no-rdoc facter hiera stomp parseconfig
 
 cd $TMP_PATH
-git clone https://github.com/mountkin/marionette-collective.git
-cd marionette-collective
-git checkout v2.5.1-patched
+get_github_archive https://github.com/mountkin/marionette-collective/archive/v2.5.1-patched.zip
 mco_conf_path=`dirname ${mco_client_conf_path}`
 ${bin_dir}/ruby install.rb --no-rdoc --plugindir=${mco_plugin_dir} --configdir=${mco_conf_path} --bindir=${bin_dir} --sbindir=${sbin_dir}
 
 cd $TMP_PATH
-
-git clone https://github.com/puppetlabs/puppet.git
-cd puppet
-git checkout 3.6.0 -b v3.6.0
+get_github_archive https://github.com/puppetlabs/puppet/archive/3.6.0.zip
 ${bin_dir}/ruby install.rb --no-rdoc --configdir=${puppet_conf_dir} --bindir=${bin_dir}
 
 # First boot script
