@@ -6,8 +6,8 @@ Gem::Specification.new do |s|
   s.name         = 'fp-node'
   s.version      = FP::VERSION
   s.platform     = Gem::Platform::RUBY
-  s.summary      = 'FirstPaaS global variables helper library'
-  s.description  = "#{`git rev-parse HEAD`[0, 6]}"
+  s.summary      = 'NiceScale global variables helper library'
+  s.description  = "NiceScale management utils"
   s.author       = 'mountkin'
   s.homepage     = 'http://firstpaas.com'
   s.license      = 'Apache 2.0'

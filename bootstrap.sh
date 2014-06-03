@@ -25,10 +25,18 @@ function checksum {
 function get_github_archive {
   local url="$1"
   local archive=`echo $url|awk -F '/' '{print $NF}'`
-  wget --output-document=$archive $url
+  wget --timeout=60 --output-document=$archive $url
+  if ! test -f $archive; then
+    fail "Failed to download $url"
+  fi
   mkdir files
   unzip -d files $archive
   cd files/`ls files`
+}
+
+function fail {
+  echo "$@" >&2
+  exit 1
 }
 
 cd $TMP_PATH
@@ -41,14 +49,17 @@ if test "$pkg_manager" = "apt-get"; then
   apt-get install -y unzip libssl1.0.0 libsqlite3-0 libyaml-0-2 libffi6 zlib1g libreadline6 wget debianutils
   deb_pkg=ns-ruby_1.9.3-p547_amd64.deb
   md5='ab4c172dee641a68cee2528cc4869393'
-  wget http://s3-us-west-2.amazonaws.com/nicescale-data/deb/$deb_pkg
+  wget --timeout=60 http://s3-us-west-2.amazonaws.com/nicescale-data/deb/$deb_pkg
   checksum $md5 $deb_pkg
   dpkg -i $deb_pkg 
   apt-get install -y -f
 elif test "$pkg_manager" = "yum"; then
   yum install -y unzip wget which
   if ! grep -riq epel /etc/yum.repos.d/; then
-    wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+    wget --timeout=60 http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+    if ! test -f epel-release-6-8.noarch.rpm; then
+      fail "Failed to download epel RPM package"
+    fi
     rpm -ivh epel-release-6-8.noarch.rpm
   fi
   if grep -q 'Amazon Linux AMI' /etc/issue; then
@@ -58,7 +69,7 @@ elif test "$pkg_manager" = "yum"; then
     rpm_file=ns-ruby-1.9.3-1.centos-6.5.x86_64.rpm
     md5='e0e5b47829b475693823b8414d406687'
   fi
-  wget http://s3-us-west-2.amazonaws.com/nicescale-data/rpm/$rpm_file
+  wget --timeout=60 http://s3-us-west-2.amazonaws.com/nicescale-data/rpm/$rpm_file
   if ! test -f $rpm_file; then
     echo "Failed to download RPM file($rpm_file)"
     exit 2
