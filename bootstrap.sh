@@ -22,22 +22,24 @@ function checksum {
   exit 1
 }
 
-function get_github_archive {
-  local url="$1"
-  local archive=`echo $url|awk -F '/' '{print $NF}'`
-  wget --timeout=60 --output-document=$archive $url
-  if ! test -f $archive; then
-    fail "Failed to download $url"
-  fi
-  mkdir files
-  unzip -q -d files $archive
-  cd files/`ls files`
-}
-
 function fail {
   echo "$@" >&2
   exit 1
 }
+
+function get_github_archive {
+  local url="$1"
+  local archive=`echo $url|awk -F '/' '{print $NF}'`
+  local tmp_dir=`head -c 1000 /dev/urandom|tr -dc 'a-z0-9A-Z'|head -c 20`
+  wget --timeout=60 --output-document=$archive $url
+  if ! test -f $archive; then
+    fail "Failed to download $url"
+  fi
+  mkdir $tmp_dir
+  unzip -q -d $tmp_dir $archive
+  cd $tmp_dir/`ls $tmp_dir`
+}
+
 
 cd $TMP_PATH
 pkg_manager=yum

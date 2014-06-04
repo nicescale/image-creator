@@ -116,6 +116,11 @@ function load_credentials {
     [ $http_status = 200 ] && break
     sleep 1
   done
+  if ! test -e $init_conf_path || ! grep -q project_id $init_conf_path; then
+    echo "Failed to load NiceScale initial config." >>/root/nicescale-init.log
+    echo "You can rerun $0 manually." >>/root/nicescale-init.log
+    exit 1
+  fi
 }
 
 function mock_credentials {
