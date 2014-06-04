@@ -93,8 +93,9 @@ plugin.rabbitmq.pool.1.password = ${key}
 factsource = yaml
 plugin.yaml = ${conf_dir}/facts.yaml
 EOS
-  cp /opt/nicescale/support/etc/mcollective.conf /etc/init/
+  mv ${ns_config_dir}/mcollective.conf /etc/init/
   start mcollective
+  ${bin_dir}/facter -y > $mco_facts_yml
 }
 
 # Remove the first boot marker file and this script

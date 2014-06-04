@@ -100,7 +100,7 @@ install -D -m 0644 $SOURCE_DIR/assets/nicescale.conf ${ns_conf_path}
 install -D -m 0644 $SOURCE_DIR/assets/facter_plugin.rb ${ruby_prefix}/lib/ruby/gems/1.9.1/gems/facter-2.0.1/lib/facter/facter_plugin.rb
 install -D -m 0644 $SOURCE_DIR/assets/mcollective.conf /opt/nicescale/support/etc/mcollective.conf
 install -D -m 0755 $SOURCE_DIR/assets/dynamic_facter.rb ${bin_dir}/dynamic_facter.rb
-echo "*/15 * * * * root ${bin_dir}/dynamic_facter.rb"
+grep -q dynamic_facter /etc/crontab || echo "*/15 * * * * root ${bin_dir}/dynamic_facter.rb" >> /etc/crontab
 touch $ns_first_boot_marker
 cat <<-EOS > /etc/rc.local
 #!/bin/sh -e
