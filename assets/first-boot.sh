@@ -112,7 +112,7 @@ function cleanup {
 function load_credentials {
   [ -d $init_conf_dir ] || mkdir -p $init_conf_dir
   for i in `seq 1 120`; do
-    local url="$ns_gateway/internal/instance-credentials/`get_instance_id`/`sign`.text"
+    local url="$cpi_url/internal/instance-credentials/`get_instance_id`/`sign`.text"
     local http_status=`curl -s -o ${init_conf_path} -w '%{http_code}' -H"Host: api.firstpaas.com" $url`
     [ $http_status = 200 ] && break
     sleep 1
@@ -130,10 +130,10 @@ function mock_credentials {
 project_id=mcollective
 uuid=deadbeef
 instance_id=`get_instance_id`
-gateway=$ns_gateway
+gateway=1.1.1.1
 key=testaaaa
 mq_vhost=test
-mq_host=mq.lajipk.com
+mq_host=xxx.example.com
 mq_port=61613
 EOS
 }
