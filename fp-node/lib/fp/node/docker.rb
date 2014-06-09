@@ -32,6 +32,10 @@ module FP
       run(service_id, 'prepare')
     end
 
+    def create(service_id)
+      run(service_id, 'create')
+    end
+
     def service(service_id)
       supported_service_actions = %w[start stop restart reload status]
       unless supported_service_actions.include?(service_action)
