@@ -19,16 +19,15 @@ def load_instance_ips
   rpc.verbose = false
   rpc.progress = false
   nodes = {}
-  rpc.get_facts(:facts => 'service_ids,ipaddress').each { |resp|
+  rpc.get_facts(:facts => 'service_ids,ipaddress_eth0').each { |resp|
     v = resp[:data][:values]
     service_ids = v['service_ids'].split(',')
     service_ids.each { |sid|
       nodes[sid] ||= {ips: []}
-      nodes[sid][:ips] << v['ipaddress']
+      nodes[sid][:ips] << v['ipaddress_eth0']
     }
   }
   
-  content = content.chop
   tmp_file = Tempfile.new(File.basename(dyn_vars_file))
   tmp_file.write nodes.to_json
   tmp_file.close
