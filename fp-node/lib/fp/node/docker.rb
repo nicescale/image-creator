@@ -44,11 +44,15 @@ module FP
       sh('service', @service_action, service_id)
     end
 
-    [:start, :stop, :restart, :rm, :commit].each { |m|
+    [:start, :stop, :restart, :commit].each { |m|
       define_method(m) do |service_id|
         sh(m.to_s, service_id)
       end
     }
+
+    def rm(service_id)
+      sh('rm', '-y', service_id)
+    end
 
     # Run a docker command.
     # The first parameter must be 'service_id'.
