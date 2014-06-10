@@ -66,8 +66,9 @@ plugin.rabbitmq.pool.1.user = ${uuid}
 plugin.rabbitmq.pool.1.password = ${key}
 
 # Facts
-factsource = yaml
-plugin.yaml = ${conf_dir}/facts.yaml
+factsource = facter
+fact_cache_time = 0
+plugin.facter.facterlib = ${ruby_prefix}/lib/ruby/gems/1.9.1/gems/facter-2.0.1/lib/facter
 EOS
   cat <<-EOS >${conf_dir}/client.cfg
 main_collective = ${mq_vhost}
@@ -90,8 +91,9 @@ plugin.rabbitmq.pool.1.user = ${uuid}
 plugin.rabbitmq.pool.1.password = ${key}
 
 # Facts
-factsource = yaml
-plugin.yaml = ${conf_dir}/facts.yaml
+factsource = facter
+fact_cache_time = 0
+plugin.facter.facterlib = ${ruby_prefix}/lib/ruby/gems/1.9.1/gems/facter-2.0.1/lib/facter
 EOS
   mv ${ns_config_dir}/mcollective.conf /etc/init/
   start mcollective

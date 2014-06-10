@@ -6,8 +6,6 @@ module FP
         ret = {}
         ret[:cf] = Util.sh([cfagent_exe, 'prepare'], 600)
         if ret[:cf][:status] == 0
-          Util.sh("#{config.bin_dir}/facter -y > #{config.mco_facts_yml}")
-
           ret[:docker] = Docker.new({service_ids: Vars.services_on_this_instance.join(','), docker_action: 'prepare'}).perform
         end
         ret
