@@ -26,7 +26,7 @@ module FP
 
       def get_auto_var_by_service(service_id, key)
         return nil if ENV['CFAGENT_PREPARE']
-        if !File.exists?(config.dynamic_params_path) or Time.now - File.mtime(AUTO_VARS_CACHE_TTL) >= AUTO_VARS_CACHE_TTL
+        if !File.exists?(config.dynamic_params_path) or Time.now - File.mtime(config.dynamic_params_path) >= AUTO_VARS_CACHE_TTL
           `#{config.dynamic_facter_install_path}`
         end
         vars = JSON.parse(File.read(config.dynamic_params_path))

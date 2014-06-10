@@ -97,7 +97,6 @@ plugin.facter.facterlib = ${ruby_prefix}/lib/ruby/gems/1.9.1/gems/facter-2.0.1/l
 EOS
   mv ${ns_config_dir}/mcollective.conf /etc/init/
   start mcollective
-  ${bin_dir}/facter -y > $mco_facts_yml
 }
 
 # Remove the first boot marker file and this script
