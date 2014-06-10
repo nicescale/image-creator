@@ -18,7 +18,8 @@
       "deploy_tags":{
           "software_version": "5.6",
           "name": "mysql-master",
-          "software": "mysql"
+          "software": "mysql",
+          "role": "master"
       }
     },
     "mysql": {
