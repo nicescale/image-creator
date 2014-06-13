@@ -68,7 +68,7 @@ plugin.rabbitmq.pool.1.password = ${key}
 # Facts
 factsource = facter
 fact_cache_time = 0
-plugin.facter.facterlib = ${ruby_prefix}/lib/ruby/gems/1.9.1/gems/facter-2.0.1/lib/facter
+plugin.facter.facterlib = ${ruby_prefix}/lib/ruby/gems/1.9.1/gems/facter-2.0.2/lib/facter
 EOS
   cat <<-EOS >${conf_dir}/client.cfg
 main_collective = ${mq_vhost}

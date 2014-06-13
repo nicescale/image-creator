@@ -80,7 +80,10 @@ elif test "$pkg_manager" = "yum"; then
   yum -y localinstall $rpm_file
 fi
 
-$bin_dir/gem install --no-ri --no-rdoc facter hiera stomp parseconfig
+$bin_dir/gem install --no-ri --no-rdoc -v 2.0.2 facter
+$bin_dir/gem install --no-ri --no-rdoc -v 1.3.2 stomp
+$bin_dir/gem install --no-ri --no-rdoc -v 1.0.4 parseconfig
+$bin_dir/gem install --no-ri --no-rdoc -v 1.3.4 hiera
 
 cd $TMP_PATH
 get_github_archive https://github.com/mountkin/marionette-collective/archive/v2.5.1-patched.zip
@@ -97,7 +100,7 @@ install -D -m 0644 $SOURCE_DIR/assets/firstpaas.ddl ${mco_plugin_dir}/mcollectiv
 
 install -D -m 0755 $SOURCE_DIR/assets/first-boot.sh ${bin_dir}/first-boot.sh
 install -D -m 0644 $SOURCE_DIR/assets/nicescale.conf ${ns_conf_path}
-install -D -m 0644 $SOURCE_DIR/assets/facter_plugin.rb ${ruby_prefix}/lib/ruby/gems/1.9.1/gems/facter-2.0.1/lib/facter/facter_plugin.rb
+install -D -m 0644 $SOURCE_DIR/assets/facter_plugin.rb ${ruby_prefix}/lib/ruby/gems/1.9.1/gems/facter-2.0.2/lib/facter/facter_plugin.rb
 install -D -m 0644 $SOURCE_DIR/assets/mcollective.conf /opt/nicescale/support/etc/mcollective.conf
 install -D -m 0755 $SOURCE_DIR/assets/dynamic_facter.rb ${bin_dir}/dynamic_facter.rb
 
