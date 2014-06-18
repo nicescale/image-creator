@@ -84,6 +84,7 @@ $bin_dir/gem install --no-ri --no-rdoc -v 2.0.2 facter
 $bin_dir/gem install --no-ri --no-rdoc -v 1.3.2 stomp
 $bin_dir/gem install --no-ri --no-rdoc -v 1.0.4 parseconfig
 $bin_dir/gem install --no-ri --no-rdoc -v 1.3.4 hiera
+$bin_dir/gem install --no-ri --no-rdoc -v 0.2.5 formatador
 
 cd $TMP_PATH
 get_github_archive https://github.com/mountkin/marionette-collective/archive/v2.5.1-patched.zip
@@ -98,11 +99,18 @@ ${bin_dir}/ruby install.rb --no-rdoc --configdir=${puppet_conf_dir} --bindir=${b
 install -D -m 0644 $SOURCE_DIR/assets/firstpaas.rb ${mco_plugin_dir}/mcollective/agent/firstpaas.rb
 install -D -m 0644 $SOURCE_DIR/assets/firstpaas.ddl ${mco_plugin_dir}/mcollective/agent/firstpaas.ddl
 
-install -D -m 0755 $SOURCE_DIR/assets/first-boot.sh ${bin_dir}/first-boot.sh
+install -D -m 0755 $SOURCE_DIR/assets/bin/first-boot.sh ${bin_dir}/first-boot.sh
 install -D -m 0644 $SOURCE_DIR/assets/nicescale.conf ${ns_conf_path}
 install -D -m 0644 $SOURCE_DIR/assets/facter_plugin.rb ${ruby_prefix}/lib/ruby/gems/1.9.1/gems/facter-2.0.2/lib/facter/facter_plugin.rb
 install -D -m 0644 $SOURCE_DIR/assets/mcollective.conf /opt/nicescale/support/etc/mcollective.conf
-install -D -m 0755 $SOURCE_DIR/assets/dynamic_facter.rb ${bin_dir}/dynamic_facter.rb
+install -D -m 0755 $SOURCE_DIR/assets/bin/dynamic_facter.rb ${bin_dir}/dynamic_facter.rb
+install -D -m 0755 $SOURCE_DIR/assets/bin/motd.rb ${bin_dir}/motd.rb
+echo "/opt/nicescale/support/bin/motd.rb" > /etc/profile.d/z-nicescale.sh
+
+cat <<-EOS >>/etc/ssh/sshd_config
+PrintMotd no
+PrintLastLog no
+EOS
 
 cd $TMP_PATH
 get_github_archive https://github.com/NiceScale/mcollective-facter-facts/archive/master.zip
@@ -122,7 +130,6 @@ ns_vars_gem=`$bin_dir/gem build fp-node.gemspec|grep File|awk '{print $2}'`
 $bin_dir/gem install --local --no-ri --no-rdoc $ns_vars_gem
 
 # logrotate
-
 cat <<-EOS > /etc/logrotate.d/nicescale-facter
 /var/log/facter.log {
   weekly
