@@ -101,9 +101,12 @@ install -D -m 0644 $SOURCE_DIR/assets/firstpaas.ddl ${mco_plugin_dir}/mcollectiv
 
 install -D -m 0755 $SOURCE_DIR/assets/bin/first-boot.sh ${bin_dir}/first-boot.sh
 install -D -m 0755 $SOURCE_DIR/assets/bin/mount.sh ${bin_dir}/mount.sh
+install -D -m 0755 $SOURCE_DIR/assets/bin/volume-detector.sh ${bin_dir}/volume-detector.sh
+
 install -D -m 0644 $SOURCE_DIR/assets/nicescale.conf ${ns_conf_path}
 install -D -m 0644 $SOURCE_DIR/assets/facter_plugin.rb ${ruby_prefix}/lib/ruby/gems/1.9.1/gems/facter-2.0.2/lib/facter/facter_plugin.rb
 install -D -m 0644 $SOURCE_DIR/assets/mcollective.conf /opt/nicescale/support/etc/mcollective.conf
+
 install -D -m 0755 $SOURCE_DIR/assets/bin/dynamic_facter.rb ${bin_dir}/dynamic_facter.rb
 install -D -m 0755 $SOURCE_DIR/assets/bin/motd.rb ${bin_dir}/motd.rb
 echo "/opt/nicescale/support/bin/motd.rb" > /etc/profile.d/z-nicescale.sh
