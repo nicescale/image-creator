@@ -142,3 +142,22 @@ action "docker", :description => "Run docker commands" do
             :description => "Docker execute result hash",
             :display_as  => "results"
 end
+
+action "mount", :description => "Format and mount an EBS volume" do
+     display :always
+     input :volume_id,
+           :prompt      => "volume_id",
+           :description => "The IaaS volume ID",
+           :type        => :string,
+           :validation  => '^.+$',
+           :optional    => false,
+           :maxlength   => 16
+     
+     output :instance_id,
+            :description => "instance ID of the instance",
+            :display_as  => "instance_id"
+     
+     output :result,
+            :description => "Result of the mount script",
+            :display_as  => "result"
+end

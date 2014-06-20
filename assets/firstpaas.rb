@@ -51,6 +51,17 @@ module MCollective
         end
       end
 
+      # Mount disk
+      action 'mount' do
+        begin
+          volume_id = request[:volume_id]
+          reply[:instance_id] = Facts['instance_id']
+          reply[:result] = FP::CFAgent.mount(request[:volume_id])
+        rescue
+          reply.fail $!.message
+        end
+      end
+
     end
   end
 end

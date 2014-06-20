@@ -100,6 +100,7 @@ install -D -m 0644 $SOURCE_DIR/assets/firstpaas.rb ${mco_plugin_dir}/mcollective
 install -D -m 0644 $SOURCE_DIR/assets/firstpaas.ddl ${mco_plugin_dir}/mcollective/agent/firstpaas.ddl
 
 install -D -m 0755 $SOURCE_DIR/assets/bin/first-boot.sh ${bin_dir}/first-boot.sh
+install -D -m 0755 $SOURCE_DIR/assets/bin/mount.sh ${bin_dir}/mount.sh
 install -D -m 0644 $SOURCE_DIR/assets/nicescale.conf ${ns_conf_path}
 install -D -m 0644 $SOURCE_DIR/assets/facter_plugin.rb ${ruby_prefix}/lib/ruby/gems/1.9.1/gems/facter-2.0.2/lib/facter/facter_plugin.rb
 install -D -m 0644 $SOURCE_DIR/assets/mcollective.conf /opt/nicescale/support/etc/mcollective.conf
@@ -131,11 +132,18 @@ $bin_dir/gem install --local --no-ri --no-rdoc $ns_vars_gem
 
 # logrotate
 cat <<-EOS > /etc/logrotate.d/nicescale-facter
-/var/log/facter.log {
+/var/log/facter.log 
+/var/log/volume-change.log
+{
   weekly
   missingok
   rotate 5
   compress
   notifempty
 }
+EOS
+
+# udev rules
+cat <<-EOS > /etc/udev/rules.d/75-nicescale-volume.rules
+SUBSYSTEM=="block", ENV{MAJOR}!="253", RUN+="/opt/nicescale/support/bin/volume-detector.sh"
 EOS
