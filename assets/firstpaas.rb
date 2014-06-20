@@ -56,7 +56,12 @@ module MCollective
         begin
           volume_id = request[:volume_id]
           reply[:instance_id] = Facts['instance_id']
-          reply[:result] = FP::CFAgent.mount(request[:volume_id])
+          res = FP::CFAgent.mount(request[:volume_id])
+          if res[:status] == 0
+            reply[:result] = res
+          else
+            reply.fail res[:stderr]
+          end
         rescue
           reply.fail $!.message
         end
