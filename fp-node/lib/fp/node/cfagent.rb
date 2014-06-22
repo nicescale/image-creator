@@ -20,7 +20,11 @@ module FP
 
       def mount(volume_id)
         raise "Must specify a volume_id" unless volume_id
-        raise "No block device attach event detected" unless File.exists?(config.volume_log)
+        1.upto(120) { |i|
+          break if File.exists?(config.volume_log)
+          raise "No block device attach event detected" if i == 120
+          sleep(0.5)
+        }
         dev_log = `grep -P "\tadd\t" #{config.volume_log}`.split("\n").last.split("\t")
         raise "No block device attach event detected" unless dev_log.any?
         dev = dev_log[2]
