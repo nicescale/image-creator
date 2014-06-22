@@ -148,5 +148,5 @@ EOS
 
 # udev rules
 cat <<-EOS > /etc/udev/rules.d/75-nicescale-volume.rules
-SUBSYSTEM=="block", ENV{MAJOR}!="253", RUN+="/opt/nicescale/support/bin/volume-detector.sh"
+SUBSYSTEM=="block", ENV{MAJOR}!="253", ENV{MAJOR}!="7", RUN+="/opt/nicescale/support/bin/volume-detector.sh"
 EOS
