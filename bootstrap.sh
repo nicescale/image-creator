@@ -147,6 +147,7 @@ cat <<-EOS > /etc/logrotate.d/nicescale-facter
 EOS
 
 # udev rules
-cat <<-EOS > /etc/udev/rules.d/75-nicescale-volume.rules
+rm -f /etc/udev/rules.d/*-nicescale-volume.rules
+cat <<-EOS > /etc/udev/rules.d/99-z-nicescale-volume.rules
 SUBSYSTEM=="block", ENV{MAJOR}!="253", ENV{MAJOR}!="7", RUN+="/opt/nicescale/support/bin/volume-detector.sh"
 EOS
