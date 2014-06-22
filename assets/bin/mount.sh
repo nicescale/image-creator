@@ -75,7 +75,7 @@ for ((i=0; i<128; i++)); do
   else
     # Detect if the block device has valid file system.
     if ! blkid|grep -Pq "^$device"; then
-      $mkfs_cmd $device
+      $mkfs_cmd $device >/dev/null
     fi
     
     # If the label exists, the label and the device must match.
