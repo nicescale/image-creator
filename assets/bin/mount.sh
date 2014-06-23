@@ -87,7 +87,7 @@ for ((i=0; i<128; i++)); do
         err_exit "The label is already taken, but the device is not $device"
       fi
     fi
-    mount_volume "$label", "$dir"
+    mount_volume "$label" "$dir"
   fi
   echo $dir
   break
