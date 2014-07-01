@@ -5,6 +5,12 @@
 if [ -f /etc/.fp/csp.conf ]; then
   . /etc/.fp/csp.conf
 fi
+CPI_HOST=${CPI_HOST:-cpi.nicescale.com}
+if [ -n "$TESTENV" ]; then
+  cpi_base_url="http://$CPI_HOST"
+else
+  cpi_base_url="https://$CPI_HOST"
+fi
 init_conf_dir=$(dirname ${init_conf_path})
 
 function get_mac {
@@ -110,7 +116,7 @@ function cleanup {
 function load_credentials {
   [ -d $init_conf_dir ] || mkdir -p $init_conf_dir
   for i in `seq 1 120`; do
-    local url="$cpi_url/internal/instance-credentials/`get_instance_id`/`sign`.text"
+    local url="$cpi_base_url/internal/instance-credentials/`get_instance_id`/`sign`.text"
     local http_status=`curl -s -o ${init_conf_path} -w '%{http_code}' $url`
     [ $http_status = 200 ] && break
     sleep 1
