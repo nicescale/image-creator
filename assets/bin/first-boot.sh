@@ -2,8 +2,9 @@
 
 # This script should and must be run only once after the instance is created.
 . /opt/nicescale/support/etc/nicescale.conf
-
-
+if [ -f /etc/.fp/csp.conf ]; then
+  . /etc/.fp/csp.conf
+fi
 init_conf_dir=$(dirname ${init_conf_path})
 
 function get_mac {
@@ -101,10 +102,6 @@ EOS
 
 # Remove the first boot marker file and this script
 function cleanup {
-  if [ -n "$TEST" ]; then
-    echo "testing"
-    return 0
-  fi
   echo -e "#!/bin/sh\nexit 0\n">/etc/rc.local
   [ -f $ns_first_boot_marker ] && rm -f $ns_first_boot_marker
   rm -f $0
@@ -125,19 +122,16 @@ function load_credentials {
   fi
 }
 
-function mock_credentials {
-  [ -d $init_conf_dir ] || mkdir -p $init_conf_dir
-  cat <<- EOS > $init_conf_path
-project_id=mcollective
-uuid=deadbeef
-instance_id=`get_instance_id`
-gateway=1.1.1.1
-key=testaaaa
-mq_vhost=test
-mq_host=xxx.example.com
-mq_port=61613
-EOS
+function load_hosts {
+  local hosts
+  if [ -n "$TESTENV" ]; then
+    hosts=$(curl -s https://raw.githubusercontent.com/NiceScale/hosts/master/testenv.txt)
+    if echo "$hosts"|grep -Pq '^\d+\.'; then
+      echo "$hosts" >> /etc/hosts
+    fi
+  fi
 }
+
 
 if [ ! -e $ns_first_boot_marker ]; then
   cleanup
@@ -145,14 +139,8 @@ if [ ! -e $ns_first_boot_marker ]; then
 fi
 
 check_iaas_env
-
-if [ -n "$TEST" ]; then
-  mock_credentials
-else
-  load_credentials
-fi
-
+load_hosts
+load_credentials
 config_mcollective
-
 cleanup
 exit 0
