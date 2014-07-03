@@ -132,9 +132,7 @@ function load_hosts {
   local hosts
   if [ -n "$TESTENV" ]; then
     hosts=$(curl -s https://raw.githubusercontent.com/NiceScale/hosts/master/testenv.txt)
-    if echo "$hosts"|grep -Pq '^\d+\.'; then
-      echo "$hosts" >> /etc/hosts
-    fi
+    echo "$hosts" >> /etc/hosts
   fi
 }
 
