@@ -118,7 +118,7 @@ function load_credentials {
   for i in `seq 1 120`; do
     local url="$cpi_base_url/internal/instance-credentials/`get_instance_id`/`sign`"
     local http_status=`curl -s -o ${init_conf_path} -w '%{http_code}' $url`
-    [ $http_status = 200 ] && break
+    [ "$http_status" = "200" ] && break
     sleep 1
   done
   if ! test -e $init_conf_path || ! grep -q project_id $init_conf_path; then
@@ -129,10 +129,14 @@ function load_credentials {
 }
 
 function load_hosts {
-  local hosts
   if [ -n "$TESTENV" ]; then
-    hosts=$(curl -s https://raw.githubusercontent.com/NiceScale/hosts/master/testenv.txt)
-    echo "$hosts" >> /etc/hosts
+    for i in `seq 1 300`; do
+      local http_status=$(curl -s -o /tmp/hosts -w '%{http_code}' https://raw.githubusercontent.com/NiceScale/hosts/master/testenv.txt)
+      [ "$http_status" = "200" ] && break
+      sleep 1
+    done
+    cat /tmp/hosts >> /etc/hosts
+    rm /tmp/hosts
   fi
 }
 
