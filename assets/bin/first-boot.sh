@@ -130,13 +130,15 @@ function load_credentials {
 
 function load_hosts {
   if [ -n "$TESTENV" ]; then
+    grep -P "localhost|$(hostname)|ip6-" /etc/hosts >/tmp/hosts.old
     for i in `seq 1 300`; do
       local http_status=$(curl -s -o /tmp/hosts -w '%{http_code}' https://raw.githubusercontent.com/NiceScale/hosts/master/testenv.txt)
       [ "$http_status" = "200" ] && break
       sleep 1
     done
-    cat /tmp/hosts >> /etc/hosts
-    rm /tmp/hosts
+    cat /tmp/hosts.old >>/etc/hosts
+    cat /tmp/hosts >>/etc/hosts
+    rm /tmp/hosts*
   fi
 }
 
