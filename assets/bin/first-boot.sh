@@ -136,7 +136,7 @@ function load_hosts {
       [ "$http_status" = "200" ] && break
       sleep 1
     done
-    cat /tmp/hosts.old >>/etc/hosts
+    cat /tmp/hosts.old >/etc/hosts
     cat /tmp/hosts >>/etc/hosts
     rm /tmp/hosts*
   fi
