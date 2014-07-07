@@ -148,6 +148,7 @@ if [ ! -e $ns_first_boot_marker ]; then
   exit 0
 fi
 
+[ -f /root/nicescale-init.log ] && rm /root/nicescale-init.log
 check_iaas_env
 load_hosts
 load_credentials
