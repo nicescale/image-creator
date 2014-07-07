@@ -38,10 +38,10 @@ module FP
 
     def service(service_id)
       supported_service_actions = %w[start stop restart reload status]
-      unless supported_service_actions.include?(service_action)
+      unless supported_service_actions.include?(@service_action)
         raise InvalidParams, "Unsupported service action. Only #{supported_service_actions.join(', ')} are supported"
       end
-      sh('service', @service_action, service_id)
+      sh('service', service_id, @service_action)
     end
 
     [:start, :stop, :restart, :commit].each { |m|
