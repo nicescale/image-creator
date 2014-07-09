@@ -1,11 +1,15 @@
 #!/bin/bash
 
 # This script should and must be run only once after the instance is created.
-. /opt/nicescale/support/etc/nicescale.conf
+
 if [ -f /etc/.fp/csp.conf ]; then
   . /etc/.fp/csp.conf
+  PROVIDER=$name
+  REGION=$region
+  unset name region
 fi
 CPI_HOST=${CPI_HOST:-cpi.nicescale.com}
+. /opt/nicescale/support/etc/nicescale.conf
 if [ -n "$TESTENV" ]; then
   cpi_base_url="http://$CPI_HOST"
 else
@@ -132,7 +136,7 @@ function load_hosts {
   if [ -n "$TESTENV" ]; then
     grep -P "localhost|$(hostname)|ip6-" /etc/hosts >/tmp/hosts.old
     for i in `seq 1 300`; do
-      local http_status=$(curl -s -o /tmp/hosts -w '%{http_code}' https://raw.githubusercontent.com/NiceScale/hosts/master/testenv.txt)
+      local http_status=$(curl -s -o /tmp/hosts -w '%{http_code}' https://raw.githubusercontent.com/NiceScale/hosts/master/${PROVIDER}-${REGION}.txt)
       [ "$http_status" = "200" ] && break
       sleep 1
     done
