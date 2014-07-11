@@ -61,11 +61,12 @@ libdir = ${lib_dir}
 logfile = /var/log/mcollective.log
 loglevel = info
 daemonize = 0
-identity = ${uuid}
 
 # Plugins
 securityprovider = psk
-plugin.psk = unset
+plugin.psk = ${project_id}
+plugin.psk_serializer = yaml
+identity = ${uuid}
 
 direct_addressing = 1
 connector = rabbitmq
@@ -90,7 +91,8 @@ loglevel = info
 
 # Plugins
 securityprovider = psk
-plugin.psk = unset
+plugin.psk = ${project_id}
+plugin.psk_serializer = yaml
 identity = ${uuid}
 
 connector = rabbitmq
