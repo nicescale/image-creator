@@ -17,18 +17,8 @@ else
 fi
 init_conf_dir=$(dirname ${init_conf_path})
 
-function get_mac {
-  /sbin/ifconfig|grep HWaddr|grep -P '^eth'|awk '{print $NF}'|sort|tr -d '\n'|tr '[:upper:]' '[:lower:]'
-}
-
-function get_ip {
-  /sbin/ifconfig|grep -A 4 -P '^eth'| grep 'inet '|awk -F: '{print $2}'|awk '{print $1}'|sort|tr -d '\n'
-}
-
 function check_iaas_env {
-  # QingCloud doesn't have a metadata server.
-  # This approach is too fragile.
-  if /bin/hostname|grep -qP '^i-.+'; then
+  if [ -f /etc/qingcloud/userdata/metadata.env ]; then
     iaas=qingcloud
   elif curl --connect-timeout 1 http://169.254.169.254/2007-01-19/meta-data/local-ipv4 -o /dev/null 2>/dev/null; then
     iaas=aws
@@ -37,16 +27,12 @@ function check_iaas_env {
 
 function get_instance_id {
   if [ "$iaas" = "aws" ]; then
-    curl http://169.254.169.254/latest/meta-data/instance-id
+    curl -s http://169.254.169.254/latest/meta-data/instance-id
   elif [ "$iaas" = "qingcloud" ]; then
-    /bin/hostname -s
+    grep instance_id /etc/qingcloud/userdata/metadata.env|awk -F '=' '{print $2}'|tr -dc 'a-z0-9-'
   fi
 }
 
-function sign {
-  local str="`get_instance_id``get_mac``get_ip`"
-  echo -n $str|sha256sum|cut -d ' ' -f 1
-}
 
 function config_mcollective {
   . ${init_conf_path}
@@ -121,17 +107,22 @@ function cleanup {
 
 function load_credentials {
   [ -d $init_conf_dir ] || mkdir -p $init_conf_dir
-  for i in `seq 1 120`; do
-    local url="$cpi_base_url/internal/instance-credentials/`get_instance_id`/`sign`"
-    local http_status=`curl -s -o ${init_conf_path} -w '%{http_code}' $url`
-    [ "$http_status" = "200" ] && break
-    sleep 1
-  done
+  if [ "$iaas" = "aws" ]; then
+    for i in `seq 1 120`; do
+      local http_status=`curl -s -o ${init_conf_path} -w '%{http_code}' http://169.254.169.254/latest/user-data`
+      [ "$http_status" = "200" ] && break
+      sleep 1
+    done
+  elsif [ "$iaas" = "qingcloud" ]; then
+    cp -f /etc/qingcloud/userdata/userdata.string $init_conf_path
+  fi
+
   if ! test -e $init_conf_path || ! grep -q project_id $init_conf_path; then
     echo "Failed to load NiceScale initial config." >>/root/nicescale-init.log
     echo "You can rerun $0 manually." >>/root/nicescale-init.log
     exit 1
   fi
+  get_instance_id >>$init_conf_path
 }
 
 function load_hosts {
