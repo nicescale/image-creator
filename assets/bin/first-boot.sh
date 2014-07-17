@@ -8,13 +8,7 @@ if [ -f /etc/.fp/csp.conf ]; then
   REGION=$region
   unset name region
 fi
-CPI_HOST=${CPI_HOST:-cpi.nicescale.com}
 . /opt/nicescale/support/etc/nicescale.conf
-if [ -n "$TESTENV" ]; then
-  cpi_base_url="http://$CPI_HOST"
-else
-  cpi_base_url="https://$CPI_HOST"
-fi
 init_conf_dir=$(dirname ${init_conf_path})
 
 function check_iaas_env {
