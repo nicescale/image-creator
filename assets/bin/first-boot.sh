@@ -122,7 +122,7 @@ function load_credentials {
     echo "You can rerun $0 manually." >>/root/nicescale-init.log
     exit 1
   fi
-  get_instance_id >>$init_conf_path
+  echo "instance_id=$(get_instance_id)" >>$init_conf_path
 }
 
 function load_hosts {
