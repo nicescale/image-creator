@@ -67,6 +67,14 @@ module MCollective
         end
       end
 
+      action 'update_env' do
+        begin
+          FP::CFAgent.update_env(request[:auto_restart] == true)
+        rescue
+          logger.error "update_env failed. #{$!.message}"
+        end
+      end
+
     end
   end
 end

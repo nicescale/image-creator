@@ -161,3 +161,11 @@ action "mount", :description => "Format and mount an EBS volume" do
             :description => "Result of the mount script",
             :display_as  => "result"
 end
+
+action "update_env", :description => "Update shared service variables such as ip_address, port, etc." do
+     input :auto_restart,
+           :prompt      => "auto_restart",
+           :description => "Whether to restart the service after updating the env file",
+           :type        => :boolean,
+           :optional    => true
+end

@@ -32,6 +32,16 @@ module FP
         cmd = [config.bin_dir + '/mount.sh', dev, volume_id, fstype]
         Util.sh(cmd, 600)
       end
+
+      def update_env(auto_restart = false)
+        base_path = config.service_base_path
+        Vars.services_on_this_instance.each { |sid|
+          ret = Util.sh([config.cf_agent, 'prjenv-dump'], 20)
+          if auto_restart and ret[:status] == 0
+            Docker.new({service_ids: sid, docker_action: 'service', service_action: 'restart'}).perform
+          end
+        }
+      end
       
       private
       def config

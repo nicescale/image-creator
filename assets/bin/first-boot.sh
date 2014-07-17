@@ -113,7 +113,7 @@ function load_credentials {
       [ "$http_status" = "200" ] && break
       sleep 1
     done
-  elsif [ "$iaas" = "qingcloud" ]; then
+  elif [ "$iaas" = "qingcloud" ]; then
     cp -f /etc/qingcloud/userdata/userdata.string $init_conf_path
   fi
 
