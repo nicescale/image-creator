@@ -3,14 +3,12 @@
 require 'fp/node'
 require 'formatador'
 
-def is_running(cid)
-  return @running_services.find { |x| cid.start_with?(x) } if @running_services
-  @running_services = []
-  `docker ps`.split("\n").each_with_index { |s, i|
-    next if i == 0
-    @running_services << s.split.first
-  }
-  @running_services.find { |x| cid.start_with?(x) }
+def is_running(sid)
+  if `/opt/nicescale/support/bin/nicedocker service #{sid} status`.strip =~ /running/i
+    'running'
+  else
+    'stopped'
+  end
 end
 
 term_cols = if test('x', '/usr/bin/tput')
@@ -26,26 +24,16 @@ services = []
 sids.each { |sid|
   tags = FP::Vars.get_service_var(sid, 'deploy_tags', 'meta')
   next unless tags.kind_of?(Hash)
+  service_path = "/services/#{sid}"
   spec = {
     name: tags['service_name'],
     service: tags['image_name'] + ':' + tags['image_version'],
-    path: "/services/#{sid}",
-    status: 'stopped',
-    container_id: '',
-    created_at: 'N/A'
+    path: service_path,
+    status: is_running(sid),
+    created_at: File.ctime(service_path)
   }
   
-  container_id_path = spec[:path] + '/containerid' 
-  if File.readable?(container_id_path)
-    spec[:container_id] = File.read(container_id_path)[0..12]
-    spec[:created_at]   = File.ctime(container_id_path)
-    spec[:status] = 'running' if is_running(spec[:container_id])
-  end
-
-  if term_cols.to_i < 80
-    spec.delete(:created_at)
-    spec.delete(:container_id)
-  elsif term_cols.to_i < 125
+  if term_cols.to_i < 125
     spec.delete(:created_at)
   end
 
