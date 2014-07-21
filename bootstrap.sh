@@ -94,6 +94,7 @@ ${bin_dir}/ruby install.rb --no-rdoc --plugindir=${mco_plugin_dir} --configdir=$
 cd $TMP_PATH
 get_github_archive https://github.com/puppetlabs/puppet/archive/3.6.0.zip
 ${bin_dir}/ruby install.rb --no-rdoc --configdir=${puppet_conf_dir} --bindir=${bin_dir}
+${bin_dir}/puppet module install puppetlabs-stdlib
 
 # First boot script
 install -D -m 0644 $SOURCE_DIR/assets/firstpaas.rb ${mco_plugin_dir}/mcollective/agent/firstpaas.rb
