@@ -131,4 +131,5 @@
   def get_global_var_by_service(service_id, key, namespace = nil)
   def get_global_var_by_cluster(cluster_id, role, key, namespace = nil)
   def services_on_this_instance
+  def services_in_this_project
 ```

@@ -67,6 +67,11 @@ module FP
         }
       end
 
+      def services_in_this_project
+        return [] unless File.exists? config.global_vars_conf_path
+        JSON.parse(File.read(config.global_vars_conf_path)).keys
+      end
+
       def has_service?(service_id)
         services_on_this_instance.include?(service_id)
       end
