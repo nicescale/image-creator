@@ -18,23 +18,12 @@ function err_exit {
   exit ${2:-1}
 }
 
-function get_uuid_by_label {
-  local label="$1"
-  for f in `blkid|grep LABEL='"'$label'"'`; do
-    if echo $f|grep -q UUID=; then
-      echo $f
-      break
-    fi
-  done
-}
-
 function mount_volume {
   local label="$1"
   local dir="$2"
-  local uuid
+  local uuid=`blkid -o udev $device|grep 'ID_FS_UUID='|cut -d '=' -f 2`
   e2label $device "$label"
-  uuid=`get_uuid_by_label "$label"`
-  grep -q "$uuid" /etc/fstab || echo "$uuid $dir $fstype defaults,barrier=1 0 0" >>/etc/fstab
+  grep -q $uuid /etc/fstab || echo "UUID=$uuid $dir $fstype defaults,barrier=1 0 0" >>/etc/fstab
   df|grep -Pq "$device\s+" || mount $dir
 }
 
