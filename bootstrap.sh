@@ -126,7 +126,7 @@ grep -q dynamic_facter /etc/crontab || echo "*/15 * * * * root ${bin_dir}/dynami
 touch $ns_first_boot_marker
 cat <<-EOS > /etc/rc.local
 #!/bin/sh -e
-${bin_dir}/first-boot.sh
+${bin_dir}/first-boot.sh &
 exit 0
 EOS
 
