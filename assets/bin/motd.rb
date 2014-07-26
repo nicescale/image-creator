@@ -40,10 +40,12 @@ sids.each { |sid|
   services << spec
 }
 
-Formatador.display_line "[green]Welcome to use NiceScale."
-Formatador.display_line "You have the folling services running on this server:[/]"
-puts ""
-Formatador.display_table(services) do
-  # Disable sorting headers.
-  0
+Formatador.display_line "[green]Welcome to use NiceScale.[/]"
+if services.any?
+  Formatador.display_line "[green]You have the folling services running on this server:[/]"
+  puts ""
+  Formatador.display_table(services) do
+    # Disable sorting headers.
+    0
+  end
 end
