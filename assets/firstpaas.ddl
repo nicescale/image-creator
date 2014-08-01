@@ -12,9 +12,9 @@ action "ping", :description => "show I'm alive" do
             :description => "instance ID of the instance",
             :display_as  => "instance_id"
      
-     output :msg,
-            :description => "pong",
-            :display_as  => "msg"
+     output :ipaddress,
+            :description => "Private IP address of eth0",
+            :display_as  => "ipaddress"
 end
 
 action "puppet_apply", :description => "Run puppet apply command immediately" do

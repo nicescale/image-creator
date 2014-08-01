@@ -5,8 +5,8 @@ module MCollective
   module Agent
     class Firstpaas<RPC::Agent
       action "ping" do
-        reply[:msg] = 'pong'
         reply[:instance_id] = Facts['instance_id']
+        reply[:ipaddress] = Facts['ipaddress_eth0']
       end
       
       action "puppet_apply" do
