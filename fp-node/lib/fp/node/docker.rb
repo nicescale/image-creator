@@ -51,7 +51,7 @@ module FP
     }
 
     def rm(service_id)
-      sh('rm', '-y', service_id)
+      sh('service', service_id, 'destroy')
     end
 
     # Run a docker command.
