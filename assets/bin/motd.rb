@@ -42,7 +42,7 @@ sids.each { |sid|
 
 Formatador.display_line "[green]Welcome to use NiceScale.[/]"
 if services.any?
-  Formatador.display_line "[green]You have the folling services running on this server:[/]"
+  Formatador.display_line "[green]You have the following services running on this server:[/]"
   puts ""
   Formatador.display_table(services) do
     # Disable sorting headers.
