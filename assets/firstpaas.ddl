@@ -176,14 +176,16 @@ action "data_sync", :description => "Spawn the data relay agent" do
            :description => "The ID of the service",
            :type        => :string,
            :validation  => '^.+$',
-           :maxlength   => 24
+           :maxlength   => 24,
+           :optional    => false
      
      input :sync_id,
            :prompt      => "sync_id",
            :description => "Unique ID of the data sync job",
            :type        => :string,
            :validation  => '^.+$',
-           :maxlength   => 24
+           :maxlength   => 24,
+           :optional    => false
      
      output :ipaddress,
             :description => "Private IP address of eth0",
