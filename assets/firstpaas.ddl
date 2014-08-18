@@ -171,6 +171,7 @@ action "update_env", :description => "Update shared service variables such as ip
 end
 
 action "data_sync", :description => "Spawn the data relay agent" do
+     display :always
      input :service_id,
            :prompt      => "service_id",
            :description => "The ID of the service",
