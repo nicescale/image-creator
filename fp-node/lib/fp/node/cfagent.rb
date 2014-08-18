@@ -42,6 +42,10 @@ module FP
           end
         }
       end
+
+      def data_sync(srv_id, sync_id)
+        Util.run_in_background(config.cf_agent, 'drs', srv_id, sync_id)
+      end
       
       private
       def config

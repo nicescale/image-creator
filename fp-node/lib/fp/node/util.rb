@@ -21,6 +21,12 @@ module FP
           status: status.exitstatus,
         }
       end
+
+      def run_in_background(*args)
+        cmd = Shellwords.join(Array(args))
+        pid = Process.spawn(cmd, out: '/dev/null', err: '/dev/null')
+        Process.detach(pid)
+      end
     end
   end
 end

@@ -169,3 +169,23 @@ action "update_env", :description => "Update shared service variables such as ip
            :type        => :boolean,
            :optional    => true
 end
+
+action "data_sync", :description => "Spawn the data relay agent" do
+     input :service_id,
+           :prompt      => "service_id",
+           :description => "The ID of the service",
+           :type        => :string,
+           :validation  => '^.+$',
+           :maxlength   => 24
+     
+     input :sync_id,
+           :prompt      => "sync_id",
+           :description => "Unique ID of the data sync job",
+           :type        => :string,
+           :validation  => '^.+$',
+           :maxlength   => 24
+     
+     output :ipaddress,
+            :description => "Private IP address of eth0",
+            :display_as  => "ipaddress"
+end

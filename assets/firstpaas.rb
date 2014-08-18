@@ -75,6 +75,15 @@ module MCollective
         end
       end
 
+      action 'data_sync' do
+        reply[:ipaddress] = Facts['ipaddress_eth0']
+        begin
+          FP::CFAgent.data_sync(request[:service_id], request[:sync_id])
+        rescue
+          reply.fail $!.message
+        end
+      end
+
     end
   end
 end
