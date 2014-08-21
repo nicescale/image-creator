@@ -185,7 +185,7 @@ action "data_sync", :description => "Spawn the data relay agent" do
            :description => "Unique ID of the data sync job",
            :type        => :string,
            :validation  => '^.+$',
-           :maxlength   => 24,
+           :maxlength   => 128,
            :optional    => false
      
      output :ipaddress,
