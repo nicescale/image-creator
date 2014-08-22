@@ -17,7 +17,7 @@
       "cluster_id": "mysqlcluster",
       "deploy_tags":{
           "image_version": "5.6",
-          "image_name": "mysql-master",
+          "image_name": "percona-mysql",
           "service_name": "mysql",
           "role": "master"
       }
@@ -34,7 +34,7 @@
       "cluster_id": "mysqlcluster"
       "deploy_tags":{
           "image_version": "5.6",
-          "image_name": "mysql-master",
+          "image_name": "percona-mysql",
           "service_name": "mysql",
           "role": "slave"
       }
