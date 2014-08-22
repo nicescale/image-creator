@@ -16,9 +16,9 @@
       ],
       "cluster_id": "mysqlcluster",
       "deploy_tags":{
-          "software_version": "5.6",
-          "name": "mysql-master",
-          "software": "mysql",
+          "image_version": "5.6",
+          "image_name": "mysql-master",
+          "service_name": "mysql",
           "role": "master"
       }
     },
@@ -33,9 +33,10 @@
       ],
       "cluster_id": "mysqlcluster"
       "deploy_tags":{
-          "software_version": "5.6",
-          "name": "mysql-slave",
-          "software": "mysql"
+          "image_version": "5.6",
+          "image_name": "mysql-master",
+          "service_name": "mysql",
+          "role": "slave"
       }
     },
     "mysql": {
