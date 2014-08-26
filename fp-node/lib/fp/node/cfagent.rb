@@ -1,21 +1,26 @@
 module FP
   class CFAgent
     class << self
-      def prepare
-        cfagent_exe = config.cf_agent
+      def prepare(with_docker = true)
         ret = {}
         ret[:cf] = Util.sh([cfagent_exe, 'prepare'], 600)
-        if ret[:cf][:status] == 0
-          ret[:docker] = Docker.new({service_ids: Vars.services_on_this_instance.join(','), docker_action: 'prepare'}).perform
+        generate_metadata
+        if ret[:cf][:status] == 0 and with_docker
+          service_ids = Vars.services_on_this_instance.join(',')
+          ret[:docker] = Docker.new({service_ids: service_ids,
+                                     docker_action: 'prepare'}).perform
         end
         ret
       end
 
+      # Apply config files.
+      # N.B. This action must be called after 'prepare'.
       def apply(force_reload_facts = true)
         if force_reload_facts
           Util.sh(config.dynamic_facter_install_path)
         end
-        Util.sh([config.cf_agent, 'apply'], 600)
+        service_ids = Vars.services_on_this_instance.join(' ')
+        Util.sh([config.cf_agent, 'apply', service_ids], 600)
       end
 
       def mount(volume_id)
@@ -25,7 +30,8 @@ module FP
           raise "No block device attach event detected" if i == 120
           sleep(0.5)
         }
-        dev_log = `grep -P "\tadd\t" #{config.volume_log}`.split("\n").last.split("\t")
+        dev_log = `grep -P "\tadd\t" #{config.volume_log}`.
+          split("\n").last.split("\t")
         raise "No block device attach event detected" unless dev_log.any?
         dev = dev_log[2]
         fstype = dev_log[4] || 'ext4'
@@ -38,7 +44,8 @@ module FP
         Vars.services_on_this_instance.each { |sid|
           ret = Util.sh([config.cf_agent, 'prjenv-dump'], 20)
           if auto_restart and ret[:status] == 0
-            Docker.new({service_ids: sid, docker_action: 'service', service_action: 'restart'}).perform
+            Docker.new({service_ids: sid, docker_action: 'service',
+                        service_action: 'restart'}).perform
           end
         }
       end
@@ -50,6 +57,14 @@ module FP
       private
       def config
         Config.instance
+      end
+
+      def cfagent_exe
+        config.cf_agent
+      end
+
+      def generate_metadata
+        Util.sh([cfagent_exe, 'apply', 'metadata'])
       end
     end
   end

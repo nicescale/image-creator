@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe FP::Vars do
   let(:service_id) {
-    'redis_slave'
+    '53fb313c6c6f6331e8050000'
   }
   let(:role) {
     'slave'
@@ -58,8 +58,9 @@ describe FP::Vars do
     )
   }
 
-  let(:instance_manifest) {
-    JSON.parse('{"modules":{"redis_slave":{"status":"enable","seq":10}},"fingerprint":"c38962184ff1b965bf5242359e677e57","role":"redis_slave","vsn":2}')
+  let(:project_manifest) {
+    sample_json = File.expand_path('../../fixtures/project-metadata.json', __FILE__)
+    IO.read(sample_json)
   }
 
   let(:auto_vars) {
@@ -71,7 +72,11 @@ describe FP::Vars do
   }
 
   let(:nicescale_config) {
-    JSON.parse %q[{"init_conf_path":"/opt/nicescale/support/env/credentials.conf","mco_client_conf_path":"/opt/nicescale/support/etc/mcollective/client.cfg","mco_server_conf_path":"/opt/nicescale/support/etc/mcollective/server.cfg","dynamic_params_path":"/opt/nicescale/support/env/dynamic_vars.json","global_vars_conf_path":"/etc/puppet/pdata/modules/.global.json","service_list_conf_path":"/etc/puppet/pdata/manifest","service_conf_path":"/etc/puppet/pdata/modules/%s.json","dynamic_facter_install_path":"/opt/nicescale/support/bin/dynamic_facter.rb"}]
+    JSON.parse %q[{"init_conf_path":"/etc/.fp/credentials.conf","mco_client_conf_path":"/opt/nicescale/support/etc/mcollective/client.cfg","mco_server_conf_path":"/opt/nicescale/support/etc/mcollective/server.cfg","dynamic_params_path":"/opt/nicescale/support/env/dynamic_vars.json","global_vars_conf_path":"/etc/puppet/pdata/modules/.global.json","project_metadata_conf_path":"/opt/nicescale/support/etc/project-metadata.json","service_conf_path":"/etc/puppet/pdata/modules/%s.json","dynamic_facter_install_path":"/opt/nicescale/support/bin/dynamic_facter.rb"}]
+  }
+
+  let(:init_config) {
+    %Q[uuid=53fb313c6c6f6331e80b0000\nproject_id=fakefake]
   }
 
   before(:each) {
@@ -80,8 +85,9 @@ describe FP::Vars do
 
     allow(File).to receive(:read).with(FP::Config.instance.global_vars_conf_path).and_return(global_vars.to_json)
     allow(File).to receive(:read).with(FP::Config.instance.dynamic_params_path).and_return(auto_vars.to_json)
-    allow(File).to receive(:read).with(FP::Config.instance.service_list_conf_path).and_return(instance_manifest.to_json)
+    allow(File).to receive(:read).with(FP::Config.instance.project_metadata_conf_path).and_return(project_manifest)
     allow(File).to receive(:read).with(FP::Config.instance.service_conf_path % ('m' + service_id)).and_return(module_vars.to_json)
+    allow(File).to receive(:read).with(FP::Config.instance.init_conf_path).and_return(init_config)
   }
 
   describe "::get_global_var_by_service" do
@@ -160,6 +166,14 @@ describe FP::Vars do
     it "should return the correct value" do
       allow(File).to receive(:exists?).and_return(true)
       expect(FP::Vars.get_cluster_var(cluster_id, role, 'port', 'redis')).to eq '6379'
+    end
+  end
+
+  describe "::services_in_this_project" do
+    it "should return all the service IDs of the project" do
+      allow(File).to receive(:exists?).and_return(true)
+      expect(FP::Vars.services_in_this_project).to be_an(Array)
+      expect(FP::Vars.services_in_this_project.count).to eq(7)
     end
   end
 

@@ -59,21 +59,38 @@ module FP
       end
 
       def services_on_this_instance
-        manifest_file = config.service_list_conf_path
-        return [] unless File.exists?(manifest_file) 
-        
-        instance_service_ids = JSON.parse(File.read(manifest_file))['modules'].keys.map { |sid|
-          sid.sub(/^m/, '')
+        manifest = project_metadata
+        return [] unless manifest['instance_vars']
+        manifest['instance_vars'][uuid]['services'].map { |s|
+          s['id']
         }
       end
 
       def services_in_this_project
-        return [] unless File.exists? config.global_vars_conf_path
-        JSON.parse(File.read(config.global_vars_conf_path)).keys
+        manifest = project_metadata
+        return [] unless manifest['instance_vars']
+        r = manifest['instance_vars'].inject([]) { |ret, (uuid, iv)|
+          ret.concat(iv['services'].map { |s| s['id'] })
+        }.uniq
+        puts r.to_json
+        r
       end
 
       def has_service?(service_id)
         services_on_this_instance.include?(service_id)
+      end
+
+      # The uuid of this instance.
+      # The uuid of the instance will never be changed, so it can be cached.
+      def uuid
+        @uuid ||= File.read(config.init_conf_path).split("\n").
+          grep(/^uuid=/).first.split('=').last
+      end
+
+      def project_metadata
+        manifest_file = config.project_metadata_conf_path
+        return {} unless File.exists?(manifest_file)
+        JSON.parse(File.read(manifest_file))
       end
 
       private

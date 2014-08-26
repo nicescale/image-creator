@@ -51,6 +51,9 @@ module FP
     }
 
     def rm(service_id)
+      # Call CF API to update local config cache.
+      CFAgent.prepare(false)
+      CFAgent.apply
       sh('service', service_id, 'destroy')
     end
 

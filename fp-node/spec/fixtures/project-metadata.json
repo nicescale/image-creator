@@ -1,0 +1,68 @@
+{
+  "instance_vars": {
+    "53fb313c6c6f6331e80b0000": {
+      "services": [
+        {
+          "service_name": "MySQL_slave",
+          "image_name": "nicescale/percona-mysql",
+          "image_version": "latest",
+          "role": "slave",
+          "id": "53fb313c6c6f6331e8050000"
+        },
+        {
+          "service_name": "PHP_Apache",
+          "image_name": "nicescale/apache_php",
+          "image_version": "latest",
+          "role": null,
+          "id": "53fb313c6c6f6331e8080000"
+        },
+        {
+          "service_name": "Redis_slave",
+          "image_name": "nicescale/redis",
+          "image_version": "latest",
+          "role": "slave",
+          "id": "53fb313c6c6f6331e8070000"
+        },
+        {
+          "service_name": "Tomcat",
+          "image_name": "nicescale/tomcat",
+          "image_version": "latest",
+          "role": null,
+          "id": "53fb313c6c6f6331e8090000"
+        }
+      ]
+    },
+    "53fb313c6c6f6331e80a0000": {
+      "services": [
+        {
+          "service_name": "Memcached",
+          "image_name": "nicescale/memcached",
+          "image_version": "latest",
+          "role": null,
+          "id": "53fb313c6c6f6331e8030000"
+        },
+        {
+          "service_name": "MySQL_master",
+          "image_name": "nicescale/percona-mysql",
+          "image_version": "latest",
+          "role": "master",
+          "id": "53fb313c6c6f6331e8040000"
+        },
+        {
+          "service_name": "PHP_Apache",
+          "image_name": "nicescale/apache_php",
+          "image_version": "latest",
+          "role": null,
+          "id": "53fb313c6c6f6331e8080000"
+        },
+        {
+          "service_name": "Redis_master",
+          "image_name": "nicescale/redis",
+          "image_version": "latest",
+          "role": "master",
+          "id": "53fb313c6c6f6331e8060000"
+        }
+      ]
+    }
+  }
+}
