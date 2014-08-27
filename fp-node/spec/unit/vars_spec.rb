@@ -2,13 +2,13 @@ require 'spec_helper'
 
 describe FP::Vars do
   let(:service_id) {
-    '53fb313c6c6f6331e8050000'
+    '53fd3d116c6f630895060000'
   }
   let(:role) {
     'slave'
   }
   let(:cluster_id) {
-    'redis1'
+    '02f6170ccc8b10f84913'
   }
 
   let(:global_vars) {
@@ -72,7 +72,7 @@ describe FP::Vars do
   }
 
   let(:nicescale_config) {
-    JSON.parse %q[{"init_conf_path":"/etc/.fp/credentials.conf","mco_client_conf_path":"/opt/nicescale/support/etc/mcollective/client.cfg","mco_server_conf_path":"/opt/nicescale/support/etc/mcollective/server.cfg","dynamic_params_path":"/opt/nicescale/support/env/dynamic_vars.json","global_vars_conf_path":"/etc/puppet/pdata/modules/.global.json","project_metadata_conf_path":"/opt/nicescale/support/etc/project-metadata.json","service_conf_path":"/etc/puppet/pdata/modules/%s.json","dynamic_facter_install_path":"/opt/nicescale/support/bin/dynamic_facter.rb"}]
+    JSON.parse %q[{"init_conf_path":"/etc/.fp/credentials.conf","mco_client_conf_path":"/opt/nicescale/support/etc/mcollective/client.cfg","mco_server_conf_path":"/opt/nicescale/support/etc/mcollective/server.cfg","dynamic_params_path":"/opt/nicescale/support/env/dynamic_vars.json","project_metadata_conf_path":"/opt/nicescale/support/etc/project-metadata.json","service_conf_path":"/etc/puppet/pdata/modules/%s.json","dynamic_facter_install_path":"/opt/nicescale/support/bin/dynamic_facter.rb"}]
   }
 
   let(:init_config) {
@@ -83,7 +83,6 @@ describe FP::Vars do
     cfg = double('config', nicescale_config)
     allow(FP::Config).to receive(:instance).and_return(cfg)
 
-    allow(File).to receive(:read).with(FP::Config.instance.global_vars_conf_path).and_return(global_vars.to_json)
     allow(File).to receive(:read).with(FP::Config.instance.dynamic_params_path).and_return(auto_vars.to_json)
     allow(File).to receive(:read).with(FP::Config.instance.project_metadata_conf_path).and_return(project_manifest)
     allow(File).to receive(:read).with(FP::Config.instance.service_conf_path % ('m' + service_id)).and_return(module_vars.to_json)
@@ -173,7 +172,7 @@ describe FP::Vars do
     it "should return all the service IDs of the project" do
       allow(File).to receive(:exists?).and_return(true)
       expect(FP::Vars.services_in_this_project).to be_an(Array)
-      expect(FP::Vars.services_in_this_project.count).to eq(7)
+      expect(FP::Vars.services_in_this_project.count).to eq(6)
     end
   end
 

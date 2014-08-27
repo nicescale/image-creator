@@ -42,9 +42,8 @@ module FP
       end
 
       def get_global_var_by_service(service_id, key, namespace = nil)
-        return nil unless File.exists? config.global_vars_conf_path
         return nil if ENV['CFAGENT_PREPARE']
-        vars = JSON.parse(File.read(config.global_vars_conf_path))[service_id]
+        vars = project_metadata[service_id]
         return nil unless vars
         
         get_namespace_var(vars, key, namespace)
@@ -60,20 +59,16 @@ module FP
 
       def services_on_this_instance
         manifest = project_metadata
-        return [] unless manifest['instance_vars']
-        manifest['instance_vars'][uuid]['services'].map { |s|
-          s['id']
-        }
+        return [] if manifest.empty?
+        manifest.select { |sid, sv|
+          sv['meta']['deploy_tags']['instance_ids'].include?(uuid) rescue nil
+        }.keys
       end
 
       def services_in_this_project
         manifest = project_metadata
-        return [] unless manifest['instance_vars']
-        r = manifest['instance_vars'].inject([]) { |ret, (uuid, iv)|
-          ret.concat(iv['services'].map { |s| s['id'] })
-        }.uniq
-        puts r.to_json
-        r
+        return [] if manifest.empty?
+        manifest.keys
       end
 
       def has_service?(service_id)
@@ -90,7 +85,8 @@ module FP
       def project_metadata
         manifest_file = config.project_metadata_conf_path
         return {} unless File.exists?(manifest_file)
-        JSON.parse(File.read(manifest_file))
+        r = JSON.parse(File.read(manifest_file))
+        r.select { |k, v| v.kind_of?(Hash) and k =~ /^[a-f0-9]+$/ }
       end
 
       private
@@ -105,10 +101,8 @@ module FP
       end
 
       def find_service(cluster_id, role)
-        return {} unless cluster_id and File.exists?(config.global_vars_conf_path)
-        vars = JSON.parse(File.read(config.global_vars_conf_path))
-
-        vars.select { |sid, spec|
+        return {} unless cluster_id
+        project_metadata.select { |sid, spec|
           next unless spec['meta'] and spec['meta']['cluster_id'] and spec['meta']['tags']
 
           spec['meta']['cluster_id'] == cluster_id and spec['meta']['tags'].include?(role)
