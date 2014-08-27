@@ -4,7 +4,6 @@ module FP
       def prepare(with_docker = true)
         ret = {}
         ret[:cf] = Util.sh([cfagent_exe, 'prepare'], 600)
-        generate_metadata
         if ret[:cf][:status] == 0 and with_docker
           service_ids = Vars.services_on_this_instance.join(',')
           ret[:docker] = Docker.new({service_ids: service_ids,
@@ -63,10 +62,6 @@ module FP
 
       def cfagent_exe
         config.cf_agent
-      end
-
-      def generate_metadata
-        Util.sh([cfagent_exe, 'apply', 'metadata'])
       end
     end
   end
