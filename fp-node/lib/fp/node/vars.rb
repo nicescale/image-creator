@@ -96,7 +96,9 @@ module FP
         connections = {}
         project_metadata.each_pair { |sid, cfg|
           next unless cfg['meta']['connections'] and
-            cfg['meta']['connections'][service_id]
+            cfg['meta']['connections'].any?
+          next unless cfg['meta']['connections'][service_id]
+          
           connections[sid] = cfg['meta']['connections'][service_id]
         }
         connections

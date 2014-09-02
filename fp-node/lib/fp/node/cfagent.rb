@@ -20,8 +20,8 @@ module FP
         end
         service_ids = Vars.services_on_this_instance.map { |sid|
           'm' + sid
-        }.join(' ')
-        Util.sh([config.cf_agent, 'apply', service_ids], 600)
+        }
+        Util.sh([config.cf_agent, 'apply'].concat(service_ids), 600)
       end
 
       def mount(volume_id)
