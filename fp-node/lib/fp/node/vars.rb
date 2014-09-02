@@ -13,7 +13,8 @@ module FP
           get_namespace_var(vars, key, namespace)
         else
           # Try to lookup global vars first, then auto vars.
-          get_global_var_by_service(service_id, key, namespace) || get_auto_var_by_service(service_id, key)
+          get_global_var_by_service(service_id, key, namespace) ||
+            get_auto_var_by_service(service_id, key)
         end
       end
 
@@ -26,7 +27,8 @@ module FP
 
       def get_auto_var_by_service(service_id, key)
         return nil if ENV['CFAGENT_PREPARE']
-        if !File.exists?(config.dynamic_params_path) or Time.now - File.mtime(config.dynamic_params_path) >= AUTO_VARS_CACHE_TTL
+        if !File.exists?(config.dynamic_params_path) or
+          Time.now - File.mtime(config.dynamic_params_path) >= AUTO_VARS_CACHE_TTL
           `#{config.dynamic_facter_install_path}`
         end
         vars = JSON.parse(File.read(config.dynamic_params_path))
@@ -87,6 +89,22 @@ module FP
         return {} unless File.exists?(manifest_file)
         r = JSON.parse(File.read(manifest_file))
         r.select { |k, v| v.kind_of?(Hash) and k =~ /^[a-f0-9]+$/ }
+      end
+
+      # Retrieve the connection config options of the given service.
+      def get_connections(service_id)
+        connections = {}
+        project_metadata.each_pair { |sid, cfg|
+          next unless cfg['meta']['connections'] and
+            cfg['meta']['connections'][service_id]
+          connections[sid] = cfg['meta']['connections'][service_id]
+        }
+        connections
+      end
+      alias_method :who_connect_me, :get_connections
+
+      def get_service_name(service_id)
+        get_service_var(service_id, 'deploy_tags', 'meta')['service_name']
       end
 
       private

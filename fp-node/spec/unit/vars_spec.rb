@@ -43,7 +43,16 @@ describe FP::Vars do
     "tags": [
       "redis",
       "slave"
-    ]
+    ],
+    "deploy_tags": {
+      "service_name": "Redis_slave",
+      "role": "slave",
+      "image_name": "nicescale/redis",
+      "image_version": "latest",
+      "instance_ids": [
+        "53fb313c6c6f6331e80b0000"
+      ]
+    }
   },
   "redis": {
     "port": "6379",
@@ -87,6 +96,10 @@ describe FP::Vars do
     allow(File).to receive(:read).with(FP::Config.instance.project_metadata_conf_path).and_return(project_manifest)
     allow(File).to receive(:read).with(FP::Config.instance.service_conf_path % ('m' + service_id)).and_return(module_vars.to_json)
     allow(File).to receive(:read).with(FP::Config.instance.init_conf_path).and_return(init_config)
+  }
+
+  after(:each) {
+    ENV.delete('CFAGENT_PREPARE')
   }
 
   describe "::get_global_var_by_service" do
@@ -177,11 +190,25 @@ describe FP::Vars do
   end
 
   context 'when the ENV["CFAGENT_PREPARE"] is set' do
-    before(:each) do
-      ENV['CFAGENT_PREPARE'] = 'true'
-    end
     it '::get_auto_var_by_service should return nil' do
+      ENV['CFAGENT_PREPARE'] = 'true'
       expect(FP::Vars.get_auto_var_by_service(service_id, 'ips')).to be_nil
     end
+  end
+
+  describe "::get_connections" do
+    it "should return the connection config options of the given service" do
+      allow(File).to receive(:exists?).and_return(true)
+      conn = FP::Vars.get_connections(service_id)
+      expect(conn.keys.first).to eq('53fd3d116c6f630895030000')
+      expect(conn.values.first).to eq({"key" => "var"})
+    end
+  end
+
+  describe "::get_service_name" do
+    it {
+      allow(File).to receive(:exists?).and_return(true)
+      expect(FP::Vars.get_service_name(service_id)).to eq('Redis_slave')
+    }
   end
 end

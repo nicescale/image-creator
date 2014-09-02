@@ -16,9 +16,9 @@
           "53fb313c6c6f6331e80b0000"
         ]
       },
-      "connections": [
+      "connections": {
 
-      ],
+      },
       "path_config": {
         "log": "/volume0/53fd3d116c6f630895040000/log",
         "data": "/volume0/53fd3d116c6f630895040000/data"
@@ -51,9 +51,9 @@
         "data": "/volume0/53fd3d116c6f630895060000/data",
         "log": "/volume0/53fd3d116c6f630895060000/log"
       },
-      "connections": [
+      "connections": {
 
-      ],
+      },
       "deploy_tags": {
         "service_name": "Redis_slave",
         "role": "slave",
@@ -104,9 +104,11 @@
         "data": "/volume0/53fd3d116c6f630895030000/data"
       },
       "service_id": "53fd3d116c6f630895030000",
-      "connections": [
-
-      ],
+      "connections": {
+        "53fd3d116c6f630895060000": {
+          "key": "var"
+        }
+      },
       "tags": [
         "mysql",
         "master"
@@ -136,9 +138,9 @@
         "redis",
         "master"
       ],
-      "connections": [
+      "connections": {
 
-      ],
+      },
       "service_id": "53fd3d116c6f630895050000",
       "path_config": {
         "log": "/volume0/53fd3d116c6f630895050000/log",
@@ -190,9 +192,9 @@
         "log": "/volume0/53fd3d116c6f630895080000/log",
         "data": "/volume0/53fd3d116c6f630895080000/data"
       },
-      "connections": [
+      "connections": {
 
-      ],
+      },
       "cluster_id": "null",
       "deploy_tags": {
         "service_name": "Tomcat",
@@ -254,9 +256,9 @@
         "data": "/volume0/53fd3d116c6f630895020000/data"
       },
       "service_id": "53fd3d116c6f630895020000",
-      "connections": [
+      "connections": {
 
-      ]
+      }
     },
     "memcached": {
       "port": "11211"
