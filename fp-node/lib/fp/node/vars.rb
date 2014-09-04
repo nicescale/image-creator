@@ -97,7 +97,7 @@ module FP
         project_metadata.each_pair { |sid, cfg|
           next unless cfg['meta']['connections'] and
             cfg['meta']['connections'].any?
-          next unless cfg['meta']['connections'][service_id]
+          next unless cfg['meta']['connections'].has_key?(service_id)
           
           connections[sid] = cfg['meta']['connections'][service_id]
         }

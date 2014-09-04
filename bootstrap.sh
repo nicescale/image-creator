@@ -112,9 +112,12 @@ install -D -m 0755 $SOURCE_DIR/assets/bin/dynamic_facter.rb ${bin_dir}/dynamic_f
 install -D -m 0755 $SOURCE_DIR/assets/bin/motd.rb ${bin_dir}/motd.rb
 echo "/opt/nicescale/support/bin/motd.rb" > /etc/profile.d/z-nicescale.sh
 
+# Disable password login and motd
+sed -i -e '/PrintMotd/d' -e '/PrintLastLog/d' -e '/PasswordAuthentication/d' /etc/ssh/sshd_config
 cat <<-EOS >>/etc/ssh/sshd_config
 PrintMotd no
 PrintLastLog no
+PasswordAuthentication no
 EOS
 
 cd $TMP_PATH
