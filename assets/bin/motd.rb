@@ -25,12 +25,18 @@ sids.each { |sid|
   tags = FP::Vars.get_service_var(sid, 'deploy_tags', 'meta')
   next unless tags.kind_of?(Hash)
   service_path = "/services/#{sid}"
+  if tags['image_name']
+    service = tags['image_name'] + ':' + tags['image_version']
+  else
+    service = 'host-management-tool'
+    service_path = nil
+  end
   spec = {
     name: tags['service_name'],
-    service: tags['image_name'] + ':' + tags['image_version'],
+    service: service,
     path: service_path,
-    status: is_running(sid),
-    created_at: File.ctime(service_path)
+    status: tags['image_name'] ? is_running(sid) : 'running',
+    created_at: tags['created_at']
   }
   
   if term_cols.to_i < 125

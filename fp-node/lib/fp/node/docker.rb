@@ -14,7 +14,9 @@ module FP
     def perform
       results = {}
       @service_ids.each { |service_id|
-        next unless Vars.has_service?(service_id)
+        tags = Vars.get_service_var(service_id, 'deploy_tags', 'meta')
+        next unless tags['image_name']
+        next unless tags['instance_ids'] and tags['instance_ids'].include?(Vars.uuid)
         results[service_id] = self.__send__(@action.to_sym, service_id)
       }
       results
